@@ -1,19 +1,17 @@
-import { Box, Container, Grid, Typography, Link, IconButton, } from "@mui/material";
+import { Box, Container, Grid, Typography, Link, IconButton } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import FacebookIcon from "@mui/icons-material/Facebook";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import Logo2 from "../assets/logo2.png";
 
 const FooterContainer = styled(Box)(({ theme }) => ({
   backgroundColor: "#FFE5CF",
-  padding: theme.spacing(6, 2),
+  padding: theme.spacing(3, 0),
   fontFamily: "Decalotype, sans-serif",
-  display: "flex",
-  alignItems: "flex-end",
   bottom: 0,
+  width: "100%",
   [theme.breakpoints.down("sm")]: {
-    padding: theme.spacing(4, 2),
+    padding: theme.spacing(2, 0),
   },
 }));
 
@@ -21,9 +19,8 @@ const VerticalDivider = styled(Box)(({ theme }) => ({
   width: "1px",
   backgroundColor: "#14235E",
   height: "180px",
-  margin: "0 60px",
+  margin: "0 40px",
   opacity: 0.4,
-  alignSelf: "center",
   [theme.breakpoints.down("md")]: {
     display: "none",
   },
@@ -31,29 +28,29 @@ const VerticalDivider = styled(Box)(({ theme }) => ({
 
 const FooterTitle = styled(Typography)(() => ({
   fontWeight: "600",
-  marginBottom: "16px",
+  marginBottom: "12px",
   color: "#14235E",
   fontFamily: "Decalotype, sans-serif",
   fontSize: "1rem",
 }));
 
 const FooterLink = styled(Link)(() => ({
-  color: "#232A45",
+  color: "#14235E",
   textDecoration: "none",
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "Decalotype, sans-serif",
   fontSize: "0.875rem",
   lineHeight: "2",
   display: "block",
   "&:hover": {
-    color: "#FD5C35",
+    color: "#FD4802",
   },
 }));
 
 const NewsletterLink = styled(Link)(() => ({
-  color: "#FD5C35",
+  color: "#FD4802",
   fontWeight: "bold",
   textDecoration: "none",
-  fontFamily: "Poppins, sans-serif",
+  fontFamily: "Decalotype, sans-serif",
   fontSize: "0.875rem",
   "&:hover": {
     textDecoration: "underline",
@@ -66,32 +63,33 @@ const Footer = () => {
       <Container maxWidth="lg">
         <Box
           display="flex"
-          alignItems="center"
-          justifyContent="center"
           width="100%"
-          flexWrap="wrap"
+          flexDirection={{ xs: "column", md: "row" }}
         >
           {/* Logo */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              height: "100px",
               justifyContent: "center",
+              paddingRight: 2,
+              height: "80px",
+              width: "120px",
             }}
           >
-            <img src={Logo2} alt="Incloz Logo" style={{ height: "60px" }} />
+            <img src={Logo2} alt="Incloz Logo" style={{ height: "100px" }} />
           </Box>
 
           <VerticalDivider />
 
-          {/* Content  */}
+          {/* Content */}
           <Grid
             container
-            spacing={4}
+            spacing={2}
             flex={1}
             alignItems="flex-start"
             justifyContent="space-between"
+            sx={{ pl: 2 }}
           >
             {/* Incloz Section */}
             <Grid item xs={12} sm={4}>
@@ -146,27 +144,17 @@ const Footer = () => {
                       sx={{
                         color: "#14235E",
                         padding: 0,
-                        "&:hover": { color: "#FD5C35" },
+                        "&:hover": { color: "#FD4802" },
                       }}
                     >
                       <InstagramIcon />
-                    </IconButton>
-                    <IconButton
-                      aria-label="Facebook"
-                      sx={{
-                        color: "#14235E",
-                        padding: 0,
-                        "&:hover": { color: "#FD5C35" },
-                      }}
-                    >
-                      <FacebookIcon />
                     </IconButton>
                     <IconButton
                       aria-label="LinkedIn"
                       sx={{
                         color: "#14235E",
                         padding: 0,
-                        "&:hover": { color: "#FD5C35" },
+                        "&:hover": { color: "#FD4802" },
                       }}
                     >
                       <LinkedInIcon />
