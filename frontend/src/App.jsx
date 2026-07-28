@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
 import "./App.css";
 import theme from "./theme";
 
@@ -27,6 +28,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
+      {/* Applique la typographie et le fond du thème au document entier. Sans
+          lui, seuls les composants MUI héritaient de la police de marque : le
+          body et les éléments HTML bruts restaient en police par défaut du
+          navigateur. */}
+      <CssBaseline />
       <Router>
         {/* AuthProvider est à l'intérieur du Router : le header et
             ProtectedRoute ont besoin des deux contextes. */}

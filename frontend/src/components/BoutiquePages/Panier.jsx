@@ -52,7 +52,7 @@ const Panier = () => {
 
       <Typography
         variant="h4"
-        sx={{ fontFamily: "Decalotype, sans-serif", fontWeight: "bold", color: "#14235E", mb: 4 }}
+        sx={{ fontWeight: "bold", color: "#14235E", mb: 4 }}
       >
         Votre panier
       </Typography>

@@ -8,7 +8,6 @@ const StoryContainer = styled(Box)(() => ({
   padding: "60px 20px",
   display: "flex",
   justifyContent: "center",
-  fontFamily: "Decalotype, sans-serif",
 }));
 
 const StyledText = styled(Typography)(({ theme }) => ({
@@ -35,7 +34,6 @@ const StyledButton = styled(Button)(() => ({
   fontWeight: "bold",
   borderRadius: "20px",
   marginTop: "30px",
-  fontFamily: "Decalotype, sans-serif",
   boxShadow: "2px 2px 10px rgba(0,0,0,0.2)",
   "&:hover": {
     backgroundColor: "#0F1C4F",
@@ -62,7 +60,7 @@ const FounderStory = () => {
             plus qu’une marque : c’est un engagement pour{" "}
             <HighlightedText>la dignité et l’indépendance de tous</HighlightedText>.
           </StyledText>
-          <Typography fontWeight="bold" sx={{ mt: 2, fontFamily: "Decalotype, sans-serif", color: "#14235E" }}>
+          <Typography fontWeight="bold" sx={{ mt: 2, color: "#14235E" }}>
             Marina Oliveira, Fondatrice d’Incloz
           </Typography>
         </Grid>
@@ -82,10 +80,10 @@ const FounderStory = () => {
         </Grid>
 
         <Grid item xs={12} textAlign="center">
-          <Typography variant="h5" fontWeight="bold" color="#14235E" sx={{ fontFamily: "Decalotype, sans-serif" }}>
+          <Typography variant="h5" fontWeight="bold" color="#14235E">
             Vous souhaitez une adaptation sur mesure ?
           </Typography>
-          <Typography variant="body1" sx={{ color: "#14235E", fontStyle: "italic", mb: 2, fontFamily: "Decalotype, sans-serif" }}>
+          <Typography variant="body1" sx={{ color: "#14235E", fontStyle: "italic", mb: 2 }}>
             Incloz vous fait un devis*
           </Typography>
           <StyledButton component={Link} to="/custom-request">

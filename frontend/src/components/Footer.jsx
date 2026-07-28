@@ -8,7 +8,6 @@ import Logo2 from "../assets/logo2.png";
 const FooterContainer = styled(Box)(({ theme }) => ({
   backgroundColor: "#FFE5CF",
   padding: theme.spacing(3, 0),
-  fontFamily: "Decalotype, sans-serif",
   bottom: 0,
   width: "100%",
   [theme.breakpoints.down("sm")]: {
@@ -31,14 +30,12 @@ const FooterTitle = styled(Typography)(() => ({
   fontWeight: "600",
   marginBottom: "12px",
   color: "#14235E",
-  fontFamily: "Decalotype, sans-serif",
   fontSize: "1rem",
 }));
 
 const FooterLink = styled(Link)(() => ({
   color: "#14235E",
   textDecoration: "none",
-  fontFamily: "Decalotype, sans-serif",
   fontSize: "0.875rem",
   lineHeight: "2",
   display: "block",
@@ -51,7 +48,6 @@ const NewsletterLink = styled(Link)(() => ({
   color: "#FD4802",
   fontWeight: "bold",
   textDecoration: "none",
-  fontFamily: "Decalotype, sans-serif",
   fontSize: "0.875rem",
   "&:hover": {
     textDecoration: "underline",

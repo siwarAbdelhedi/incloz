@@ -94,6 +94,34 @@ présentes dans `backend/uploads/`.
 
 ---
 
+## Charte graphique
+
+`frontend/src/theme.js` est la **source unique** des couleurs, de la typographie
+et des valeurs de mise en page. Aucun composant ne doit réécrire une couleur en
+dur : on passe par `theme.palette.*` ou l'attribut `sx`.
+
+| Jeton | Valeur | Usage |
+|---|---|---|
+| `primary.main` | `#DC3A00` | Boutons et surfaces portant du texte |
+| `primary.light` | `#FD4802` | Aplats décoratifs sans texte |
+| `primary.dark` | `#B32E00` | Texte et liens orange sur fond clair |
+| `secondary.main` | `#14235E` | Navy de marque |
+| `brand.cream` / `peach` / `sand` | `#FFF6EB` / `#FFE5CF` / `#FCDAAF` | Les trois fonds de la charte |
+| `layout.headerOffset` | `72px` / `80px` | Hauteur réelle de la barre fixe |
+
+L'orange d'origine `#FD4802` plafonne à 3,44:1 avec du texte blanc, sous le seuil
+WCAG AA de 4,5:1. `primary.main` en est une version à peine assombrie qui atteint
+4,52:1 ; la teinte d'origine reste disponible en `primary.light` pour les aplats
+qui ne portent pas de texte. `frontend/src/tests/theme.test.js` revérifie ces
+contrastes à chaque exécution des tests.
+
+La police de marque est **Outfit**, auto-hébergée via
+`@fontsource-variable/outfit` — aucune requête vers un domaine tiers, donc pas de
+dépendance réseau ni de fuite d'adresse IP des visiteurs. Pour en changer,
+modifier `BRAND_FONT` dans `theme.js` et l'import correspondant dans `main.jsx`.
+
+---
+
 ## Tests
 
 ```bash
