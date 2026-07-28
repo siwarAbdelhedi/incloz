@@ -1,27 +1,36 @@
 import express from 'express'
-import { createCustomRequest } from '../controllers/customRequestController.js'
 import multer from 'multer'
 import path from 'path'
+import fs from 'fs'
+import {
+  createCustomRequest,
+  getCustomRequests,
+  getCustomRequestById,
+  getCustomRequestPhoto,
+} from '../controllers/customRequestController.js'
+import { protect, admin } from '../middleware/authMiddleware.js'
 import { formLimiter } from '../middleware/rateLimiters.js'
 import validate from '../middleware/validate.js'
 import { customRequestRules } from '../validators/customRequestValidators.js'
+import { PRIVATE_UPLOADS_DIR } from '../config/paths.js'
 
 const router = express.Router()
 
-// Configuration du stockage pour multer
+fs.mkdirSync(PRIVATE_UPLOADS_DIR, { recursive: true })
+
+// Destination hors du dossier servi en statique : ces photos accompagnent des
+// mensurations corporelles et ne sortent que par la route protégée
+// GET /:id/photo. Elles atterrissaient auparavant dans uploads/, exposé sur
+// Internet avec des noms de fichiers énumérables.
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, 'uploads/')
+    cb(null, PRIVATE_UPLOADS_DIR)
   },
   filename(req, file, cb) {
-    cb(
-      null,
-      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`
-    )
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
   },
 })
 
-// Vérification du type de fichier
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|pdf/
   const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
@@ -43,13 +52,18 @@ const upload = multer({
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
 })
 
-router.post(
-  '/',
-  formLimiter,
-  upload.single('photos'),
-  customRequestRules,
-  validate,
-  createCustomRequest
-)
+router
+  .route('/')
+  .post(
+    formLimiter,
+    upload.single('photos'),
+    customRequestRules,
+    validate,
+    createCustomRequest
+  )
+  .get(protect, admin, getCustomRequests)
+
+router.get('/:id', protect, admin, getCustomRequestById)
+router.get('/:id/photo', protect, admin, getCustomRequestPhoto)
 
 export default router

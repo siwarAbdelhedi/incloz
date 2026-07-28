@@ -1,10 +1,10 @@
-import path from 'path'
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 import helmet from 'helmet'
 import { notFound, errorHandler } from './middleware/errorHandler.js'
 import { apiLimiter } from './middleware/rateLimiters.js'
+import { PUBLIC_UPLOADS_DIR } from './config/paths.js'
 
 import userRoutes from './routes/userRoutes.js'
 import productRoutes from './routes/productRoutes.js'
@@ -49,8 +49,9 @@ app.use('/api/products', productRoutes)
 app.use('/api/cart', cartRoutes)
 app.use('/api/custom-request', customRequestRoutes)
 
-const __dirname = path.resolve()
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')))
+// Uniquement les visuels du catalogue. Les pièces jointes des demandes
+// sur-mesure vivent dans private-uploads/, qui n'est volontairement pas ici.
+app.use('/uploads', express.static(PUBLIC_UPLOADS_DIR))
 
 app.get('/', (req, res) => {
   res.send('incloz API is running....')

@@ -1,0 +1,5 @@
+# Pièces jointes des demandes sur-mesure : données personnelles, jamais versionnées.
+# Ce dossier n'est pas servi en statique ; les fichiers sortent uniquement par
+# GET /api/custom-request/:id/photo, réservé aux administrateurs.
+*
+!.gitignore

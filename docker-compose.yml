@@ -36,8 +36,11 @@ services:
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
     volumes:
       - ./backend/src:/app/src
-      # Les uploads disque survivent au redémarrage du conteneur.
+      # Visuels du catalogue, servis en statique.
       - ./backend/uploads:/app/uploads
+      # Pièces jointes des demandes sur-mesure : jamais servies en statique,
+      # accessibles uniquement via GET /api/custom-request/:id/photo (admin).
+      - ./backend/private-uploads:/app/private-uploads
 
   web:
     build:

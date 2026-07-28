@@ -182,11 +182,20 @@ Base : `/api`. Les routes privées attendent un en-tête
 
 ### Demandes sur-mesure
 
-| Méthode | Route | Accès |
-|---|---|---|
-| `POST` | `/custom-request` | Public, `multipart/form-data` |
+| Méthode | Route | Accès | Description |
+|---|---|---|---|
+| `POST` | `/custom-request` | Public, `multipart/form-data` | Dépôt d'une demande. Accuse réception sans renvoyer les données déposées |
+| `GET` | `/custom-request` | Admin | Liste, la plus récente d'abord |
+| `GET` | `/custom-request/:id` | Admin | Une demande |
+| `GET` | `/custom-request/:id/photo` | Admin | Sert la pièce jointe |
 
 Collecte identité, coordonnées, mensurations et une photo.
+
+Les pièces jointes sont écrites dans `backend/private-uploads/`, **jamais servi
+en statique**. Elles ne sortent que par la route `:id/photo`, réservée aux
+administrateurs, et le nom de fichier n'apparaît dans aucune réponse de l'API.
+Le dossier `backend/uploads/`, lui, reste public : il ne contient que les
+visuels du catalogue.
 
 ### Upload
 
@@ -210,20 +219,22 @@ dans la roadmap.
 
 ### Sécurité
 
-- **Les photos du formulaire sur-mesure sont accessibles sans
-  authentification.** Elles sont écrites sur le disque dans `backend/uploads/`,
-  servi en statique, avec des noms de fichiers (`photos-<timestamp>.jpg`)
-  énumérables par force brute. Elles accompagnent des mensurations corporelles.
-  C'est le point le plus sensible restant : à basculer sur Cloudinary en privé
-  avec URLs signées.
+- Les pièces jointes des demandes sur-mesure sont stockées **sur le disque du
+  serveur**. C'est privé et suffisant pour aujourd'hui, mais ça ne survit pas à
+  un déploiement conteneurisé sans volume, et ça ne se réplique pas sur
+  plusieurs instances. Cible : Cloudinary en mode `authenticated` avec URLs
+  signées.
 - Les mots de passe n'ont pas de parcours de récupération, alors que le lien
   « mot de passe oublié » existe dans le formulaire de connexion.
+- Aucune durée de conservation n'est appliquée aux demandes sur-mesure ni à
+  leurs photos.
 - Dépendances obsolètes : Mongoose 5 (fin de vie, vulnérabilité critique
   d'injection), jsonwebtoken 8, multer 1.4.
 
 Déjà traité : `helmet`, limitation de débit, validation des entrées sur toutes
 les routes d'écriture, `POST /api/upload` réservé aux administrateurs, corps
-JSON et fichiers plafonnés.
+JSON et fichiers plafonnés, pièces jointes sorties du dossier public et
+réservées aux administrateurs.
 
 ### Fonctionnel
 
