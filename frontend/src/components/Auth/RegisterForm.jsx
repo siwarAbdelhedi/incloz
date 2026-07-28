@@ -74,7 +74,7 @@ const RegisterForm = () => {
 
   return (
     <StyledForm component="form" onSubmit={handleRegister}>
-      <Typography variant="h5" color="#14235E" fontWeight="bold" gutterBottom>
+      <Typography variant="h5" component="h1" color="#14235E" fontWeight="bold" gutterBottom>
         Créer un compte
       </Typography>
 

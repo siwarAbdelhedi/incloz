@@ -49,8 +49,8 @@ const StyledButton = styled(Button)(() => ({
 
 const HeroSection = () => {
   return (
-    <HeroContainer sx={{ marginTop: '70px' }}>
-      <Typography variant="h4" fontWeight="bold" color="#232A45">
+    <HeroContainer>
+      <Typography variant="h4" component="h1" fontWeight="bold" color="#232A45">
         Incloz, le style qui vous suit.
       </Typography>
       <Typography variant="body1" color="#232A45" sx={{ mt: 1, fontStyle: "italic" }}>

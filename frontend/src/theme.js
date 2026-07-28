@@ -83,10 +83,15 @@ const theme = createTheme({
 
   // Valeurs de mise en page partagées.
   layout: {
-    // Hauteur réelle de la barre fixe, mesurée dans le navigateur : 72px sous
-    // md, 80px au-delà. Le `marginTop: '70px'` copié dans chaque page était
-    // faux aux deux breakpoints et faisait passer le contenu sous la barre.
-    headerOffset: { xs: '72px', md: '80px' },
+    // Hauteur réelle de la barre fixe, mesurée dans un navigateur sur dix
+    // largeurs de fenêtre : 56px jusqu'à 599px, 64px à partir de 600px. Ce sont
+    // les hauteurs de la Toolbar de MUI, dont le palier est `sm` et non `md`.
+    //
+    // Une première estimation à 72/80px, posée avec la charte, dépassait de
+    // 16px : elle n'était pas gênante à l'œil — juste du blanc en trop — mais
+    // elle était fausse, et le `marginTop: '70px'` qu'elle remplaçait l'était
+    // aussi, dans l'autre sens.
+    headerOffset: { xs: '56px', sm: '64px' },
     // Rayon des boutons « pilule », déclaré tantôt à 20px tantôt à 30px.
     pillRadius: '999px',
   },

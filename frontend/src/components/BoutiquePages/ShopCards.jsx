@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
+import PropTypes from "prop-types";
 import axios from "axios";
 import bgPattern from "../../assets/photo2.png";
 import { API_URL, IMG_URL } from "../../config/api";
@@ -65,7 +66,11 @@ const AddButton = styled(Button)({
   },
 });
 
-const ShopCards = () => {
+// Ce bloc est monté à deux endroits : sur /boutique, où « La boutique » est le
+// sujet de la page, et sur l'accueil, où ce n'est qu'une section parmi d'autres.
+// Le niveau du titre suit donc le contexte — sans ce réglage, l'accueil aurait
+// deux <h1>, ce qui casse la structure du document.
+const ShopCards = ({ titreComposant = "h2" }) => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
 
@@ -121,16 +126,20 @@ const ShopCards = () => {
         flexDirection: "column",
         alignItems: "center",
         overflow: "visible",
-        marginTop: '70px'
       }}
     >
       {/* Titre avec étiquette */}
       <Box sx={{ textAlign: "center", mb: 8, position: "relative" }}>
+        {/* C'était une simple <div> stylée en gros et gras : visuellement un
+            titre, mais invisible comme tel pour un lecteur d'écran. Le rendu
+            est identique, seule la balise change. */}
         <Box
+          component={titreComposant}
           sx={{
             backgroundColor: "white",
             px: 6,
             py: 1.5,
+            m: 0,
             borderRadius: "20px",
             display: "inline-block",
             fontWeight: "bold",
@@ -258,6 +267,10 @@ const ShopCards = () => {
       </Button>
     </Box>
   );
+};
+
+ShopCards.propTypes = {
+  titreComposant: PropTypes.string,
 };
 
 export default ShopCards;

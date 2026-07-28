@@ -65,7 +65,6 @@ const CustomRequest = () => {
         alignItems: "flex-start",
         py: 10,
         px: 2,
-        marginTop: '70px'
       }}
     >
       <Box
@@ -78,7 +77,7 @@ const CustomRequest = () => {
           boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
         }}
       >
-        <Typography variant="h4" fontWeight="bold" color="#14235E" mb={4} textAlign="center">
+        <Typography variant="h4" component="h1" fontWeight="bold" color="#14235E" mb={4} textAlign="center">
           Fiche de renseignement
         </Typography>
 

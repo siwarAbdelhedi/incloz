@@ -56,7 +56,9 @@ const NewsletterLink = styled(Link)(() => ({
 
 const Footer = () => {
   return (
-    <FooterContainer>
+    // component="footer" donne le rôle contentinfo : c'est ce qui permet à un
+    // lecteur d'écran de sauter directement au pied de page.
+    <FooterContainer component="footer">
       <Container maxWidth="lg">
         <Box
           display="flex"
