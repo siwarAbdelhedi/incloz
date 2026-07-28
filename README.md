@@ -44,7 +44,12 @@ docker compose down         # tout arrêter
 
 ### Sans Docker
 
-Prérequis : Node.js 20+, et un MongoDB accessible.
+Prérequis : la version de Node indiquée dans `.nvmrc` (`nvm use` à la racine),
+et un MongoDB accessible. C'est la même version que celle utilisée par la CI.
+
+Le front ne descend pas sous Node 22.22 : ses outils de test (jsdom, Testing
+Library) l'exigent, et sous Node 20 le npm 10 associé résout l'arbre de
+dépendances autrement — `npm ci` échoue alors sur un lockfile pourtant valide.
 
 ```bash
 npm install                 # dépendances du monorepo (concurrently)
@@ -264,7 +269,12 @@ réservées aux administrateurs.
 
 ### Qualité
 
-- **Aucun test automatisé**, dans aucune des deux applications.
+- **Deux copies de Vite cohabitent** dans le front : la version 5 déclarée en
+  dépendance sert au `dev` et au `build`, mais Vitest 4 exige Vite ≥ 6 et
+  installe donc sa propre copie (Vite 8) pour exécuter les tests. Les tests ne
+  passent pas par le même bundler que la production — une transformation peut
+  donc réussir en test et échouer au build, ou l'inverse. À résoudre en montant
+  le front sur Vite 7+, ce qui implique aussi `@vitejs/plugin-react` 5.
 - Environ 13 Mo d'images non optimisées dans `frontend/src/assets/` et un
   bundle JS de 510 Ko.
 - Accessibilité jamais auditée — un enjeu central pour une marque qui
