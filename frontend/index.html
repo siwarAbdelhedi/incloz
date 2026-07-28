@@ -1,10 +1,50 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inclozing</title>
+
+    <!-- Titre de repli, servi tel quel aux robots qui n'exécutent pas le
+         JavaScript. Une fois l'application montée, TitreDePage l'ajuste à la
+         route affichée. -->
+    <title>Incloz — Vêtements de sport adaptés pour parathlètes</title>
+    <meta
+      name="description"
+      content="Vêtements de sport adaptés aux parathlètes : fermetures par pressions, auto-agrippant ou aimants. Chaque pièce est personnalisable selon vos besoins."
+    />
+
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/favicon-180.png" />
+    <meta name="theme-color" content="#FFF6EB" />
+
+    <!-- Aperçu lors d'un partage. Les robots des réseaux sociaux lisent le HTML
+         sans exécuter le JavaScript : ces valeurs doivent donc figurer ici, en
+         statique, et non être posées par React au montage.
+
+         Les URL doivent être absolues — une adresse relative est ignorée aussi
+         bien par Facebook que par LinkedIn. VITE_SITE_URL est substituée au
+         build par Vite. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Incloz" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta
+      property="og:title"
+      content="Incloz — Vêtements de sport adaptés pour parathlètes"
+    />
+    <meta
+      property="og:description"
+      content="Vêtements de sport adaptés aux parathlètes : fermetures par pressions, auto-agrippant ou aimants. Chaque pièce est personnalisable selon vos besoins."
+    />
+    <meta property="og:url" content="%VITE_SITE_URL%/" />
+    <meta property="og:image" content="%VITE_SITE_URL%/partage-incloz.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Logo Incloz sur fond bleu nuit, avec la mention « Vêtements de sport adaptés pour parathlètes »"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
   </head>
   <body>
     <div id="root"></div>

@@ -25,6 +25,7 @@ import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import NotFound from "./pages/NotFound";
 import AuthProvider from "./context/AuthProvider";
 import ProtectedRoute from "./components/ProtectedRoute";
+import TitreDePage from "./components/TitreDePage";
 
 const App = () => {
   return (
@@ -38,6 +39,8 @@ const App = () => {
         {/* AuthProvider est à l'intérieur du Router : le header et
             ProtectedRoute ont besoin des deux contextes. */}
         <AuthProvider>
+          {/* Aligne le titre de l'onglet sur la route affichée. */}
+          <TitreDePage />
           {/* Premier élément focusable de la page. Sans lui, un utilisateur au
               clavier doit traverser tout le header — logo, 4 liens de menu,
               session, panier — avant d'atteindre le contenu, et cela sur chaque
@@ -47,10 +50,10 @@ const App = () => {
           </a>
           <Header />
           {/* Le décalage sous la barre fixe est appliqué ici, une seule fois,
-              plutôt que recopié dans chaque page. Neuf pages le déclaraient à
-              70px — une valeur fausse aux deux breakpoints — et quatre autres
-              (blog, contact, connexion, inscription) l'oubliaient purement et
-              simplement : leur contenu passait sous la barre. */}
+              plutôt que recopié dans chaque page. Neuf pages le déclaraient
+              chacune à 70px, quatre l'oubliaient — et quatre titres étaient
+              effectivement masqués par la barre : /ContactForm et les trois
+              pages légales. */}
           <Box component="main" id="contenu" sx={{ pt: theme.layout.headerOffset }}>
             <Routes>
               <Route path="/" element={<HomeScreen />} />
