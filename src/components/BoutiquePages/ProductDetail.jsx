@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL, IMG_URL } from "../../config/api";
 
 // Create a custom theme to match the design
 const theme = createTheme({
@@ -85,8 +86,6 @@ const ProductDetail = () => {
   const [adaptation, setAdaptation] = useState("pression");
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL;
-  const IMG_URL = import.meta.env.VITE_IMG_URL;
 
 
   useEffect(() => {
@@ -99,7 +98,7 @@ const ProductDetail = () => {
       }
     };
     getProduct();
-  }, [id, API_URL]);
+  }, [id]);
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -241,7 +240,7 @@ const ProductDetail = () => {
       <Box sx={{ width: 80, height: 80, backgroundColor: "#FD5C35", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Box
           component="img"
-          src={`https://api.incloz.com/uploads/${product.image}`}
+          src={`${IMG_URL}/${product.image}`}
           alt={product.title}
           sx={{ width: "70%", height: "auto", objectFit: "contain" }}
         />

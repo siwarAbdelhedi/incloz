@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import axios from "axios";
 import bgPattern from "../../assets/photo2.png";
+import { API_URL, IMG_URL } from "../../config/api";
 
 // Styled components adaptés pour correspondre au design
 const StyledCard = styled(Card)(() => ({
@@ -67,8 +68,6 @@ const AddButton = styled(Button)({
 const ShopCards = () => {
   const navigate = useNavigate();
   const [items, setItems] = useState([]);
-  const API_URL = import.meta.env.VITE_API_URL;
-  const IMG_URL = import.meta.env.VITE_IMG_URL;
 
   // Mock data temporaire pour le développement
   useEffect(() => {
@@ -103,7 +102,7 @@ const ShopCards = () => {
       }
     };
     fetchProducts();
-  }, [API_URL]);
+  }, []);
 
   const handleAddToCart = (id) => {
     navigate(`/product/${id}`);
