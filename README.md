@@ -89,11 +89,34 @@ présentes dans `backend/uploads/`.
 
 ---
 
+## Tests
+
+```bash
+npm --prefix backend test          # une fois
+npm --prefix backend run test:watch
+```
+
+Vitest + supertest. Les tests tournent contre un **MongoDB en mémoire**
+(`mongodb-memory-server`) : rien à installer, aucune base réelle touchée, et
+chaque test repart d'une base vide.
+
+L'API est instanciée sans ouvrir de port : `src/app.js` construit et exporte
+l'application Express, `src/server.js` se contente de charger l'environnement,
+de connecter MongoDB et d'écouter. C'est ce découpage qui rend l'API testable.
+
+Couverture actuelle — 28 tests sur l'authentification et les autorisations :
+inscription, connexion, invariants du hachage des mots de passe, middleware
+`protect` (jeton absent, invalide, sans préfixe `Bearer`, compte supprimé),
+accès aux produits, à la liste des comptes et au panier.
+
+Le front n'a pas encore de tests.
+
 ## Scripts
 
 | Commande | Effet |
 |---|---|
 | `npm run setup` | Installe les dépendances des deux applications |
+| `npm --prefix backend test` | Tests de l'API |
 | `npm run dev` | Lance l'API et le front en parallèle |
 | `npm run dev:api` / `npm run dev:web` | Lance une seule des deux |
 | `npm run lint` | ESLint sur le front |
