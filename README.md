@@ -188,8 +188,28 @@ sont injectées dans le bundle au build et sont donc publiques par nature. Elles
 ne contiennent que des URLs. Pour surcharger en local, utiliser
 `frontend/.env.local` (ignoré par git).
 
+| Variable | Rôle |
+|---|---|
+| `VITE_API_URL` | Base de l'API |
+| `VITE_IMG_URL` | Dossier public des visuels produit |
+| `VITE_SITE_URL` | Adresse publique du site, substituée dans `index.html` au build pour construire les URL absolues d'Open Graph |
+
 Sans aucun fichier `.env`, `frontend/src/config/api.js` retombe sur
-`http://localhost:5000`.
+`http://localhost:5000`. `VITE_SITE_URL` n'a en revanche pas de repli : si elle
+manque, Vite laisse le marqueur `%VITE_SITE_URL%` tel quel dans le HTML produit
+et l'aperçu de partage s'affiche sans visuel. Un test le vérifie.
+
+### Aperçu de partage et icônes
+
+`frontend/public/` contient `favicon-32.png`, `favicon-180.png` (icône iOS),
+`favicon-512.png` et `partage-incloz.png` (la vignette 1200×630 des réseaux
+sociaux). Ces quatre images sont **dérivées des logos existants**
+(`src/assets/logo.png`, 110×30, et `logo2.png`, 94×102).
+
+Ces sources sont matricielles et très petites : au-delà d'environ trois fois
+leur taille, le rendu devient visiblement flou — c'est pourquoi le mot-symbole
+n'occupe qu'un tiers de la vignette de partage. **Un logo vectoriel (SVG) ou une
+version haute définition permettrait de les régénérer proprement.**
 
 ---
 
