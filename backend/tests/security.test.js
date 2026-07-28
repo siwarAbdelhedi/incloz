@@ -16,6 +16,35 @@ describe('En-têtes de sécurité (helmet)', () => {
   })
 })
 
+// Le site et l'API sont sur deux domaines distincts. helmet posant
+// `Cross-Origin-Resource-Policy: same-origin` partout, le navigateur bloquait
+// le chargement des visuels produit : le catalogue s'affichait sans images,
+// sans la moindre erreur côté serveur pour le signaler.
+describe('Visuels du catalogue (/uploads)', () => {
+  it('sont lisibles depuis un autre domaine', async () => {
+    const res = await api().get('/uploads/tshirt.png')
+
+    expect(res.status).toBe(200)
+    expect(res.headers['cross-origin-resource-policy']).toBe('cross-origin')
+  })
+
+  it('conservent le reste du durcissement', async () => {
+    const res = await api().get('/uploads/tshirt.png')
+
+    expect(res.headers['x-content-type-options']).toBe('nosniff')
+    expect(res.headers['x-powered-by']).toBeUndefined()
+  })
+
+  // L'ouverture ne doit valoir que pour ce dossier : le reste de l'API n'a
+  // aucune raison d'être lisible depuis un autre domaine.
+  it("n'ouvrent pas la politique au reste de l'API", async () => {
+    for (const route of ['/', '/api/products']) {
+      const res = await api().get(route)
+      expect(res.headers['cross-origin-resource-policy'], route).toBe('same-origin')
+    }
+  })
+})
+
 // Cette route pousse sur le compte Cloudinary du projet et n'était protégée
 // par rien.
 describe('POST /api/upload', () => {

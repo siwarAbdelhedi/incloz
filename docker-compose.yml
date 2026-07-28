@@ -11,7 +11,17 @@ services:
     container_name: incloz-mongo
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      # Liaison au loopback uniquement. « 27017:27017 » publie sur 0.0.0.0,
+      # c'est-à-dire sur toutes les interfaces de la machine — et l'image mongo
+      # ne demande aucune authentification par défaut. Une base ainsi ouverte
+      # est trouvée en quelques heures par des robots qui la vident et y
+      # laissent une demande de rançon. C'est exactement ce qui est arrivé à la
+      # base de développement de ce projet le 28 juillet 2026.
+      #
+      # L'API n'a pas besoin de cette publication : dans le réseau compose elle
+      # joint la base par le nom du service (voir MONGO_URI plus bas). Le port
+      # n'est ici que pour brancher mongosh ou Compass depuis la machine.
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongo-data:/data/db
 
