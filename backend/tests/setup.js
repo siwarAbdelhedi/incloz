@@ -11,6 +11,13 @@ let mongod
 process.env.JWT_SECRET = 'secret_de_test'
 process.env.NODE_ENV = 'test'
 
+// Les limiteurs restent actifs mais avec des plafonds hauts : la suite fait
+// beaucoup d'appels d'authentification légitimes. Le comportement de limitation
+// lui-même est testé à part, dans rateLimit.test.js, sur une app dédiée.
+process.env.RATE_LIMIT_AUTH_MAX = '100000'
+process.env.RATE_LIMIT_FORM_MAX = '100000'
+process.env.RATE_LIMIT_GLOBAL_MAX = '100000'
+
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create()
   await mongoose.connect(mongod.getUri(), {

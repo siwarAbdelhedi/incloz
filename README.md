@@ -192,7 +192,14 @@ Collecte identité, coordonnées, mensurations et une photo.
 
 | Méthode | Route | Accès |
 |---|---|---|
-| `POST` | `/upload` | **Public** — voir l'avertissement ci-dessous |
+| `POST` | `/upload` | Admin — envoi d'un visuel sur Cloudinary |
+
+### Limitation de débit
+
+Toutes les routes `/api` sont plafonnées. Connexion et inscription : 10 tentatives
+par quart d'heure. Formulaire sur-mesure : 5 envois par heure. Reste de l'API :
+300 requêtes par quart d'heure. Ajustable par variable d'environnement, voir
+`backend/.env.example`.
 
 ---
 
@@ -203,17 +210,20 @@ dans la roadmap.
 
 ### Sécurité
 
-- **`POST /api/upload` n'exige aucune authentification** et pousse directement
-  sur le compte Cloudinary. N'importe qui peut y déposer des fichiers, à vos
-  frais. Cette route n'est utilisée par aucun écran du front : la protéger ou
-  la supprimer est le correctif le plus rentable du projet.
-- Les photos envoyées via le formulaire sur-mesure sont écrites sur le disque
-  dans `backend/uploads/`, servi en statique et **sans authentification**. Les
-  noms de fichiers (`photos-<timestamp>.jpg`) sont énumérables. Ces photos
-  accompagnent des données de santé au sens large (mensurations).
-- Pas de `helmet`, pas de rate limiting, pas de validation des entrées.
+- **Les photos du formulaire sur-mesure sont accessibles sans
+  authentification.** Elles sont écrites sur le disque dans `backend/uploads/`,
+  servi en statique, avec des noms de fichiers (`photos-<timestamp>.jpg`)
+  énumérables par force brute. Elles accompagnent des mensurations corporelles.
+  C'est le point le plus sensible restant : à basculer sur Cloudinary en privé
+  avec URLs signées.
+- Les mots de passe n'ont pas de parcours de récupération, alors que le lien
+  « mot de passe oublié » existe dans le formulaire de connexion.
 - Dépendances obsolètes : Mongoose 5 (fin de vie, vulnérabilité critique
   d'injection), jsonwebtoken 8, multer 1.4.
+
+Déjà traité : `helmet`, limitation de débit, validation des entrées sur toutes
+les routes d'écriture, `POST /api/upload` réservé aux administrateurs, corps
+JSON et fichiers plafonnés.
 
 ### Fonctionnel
 

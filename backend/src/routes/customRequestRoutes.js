@@ -2,6 +2,9 @@ import express from 'express'
 import { createCustomRequest } from '../controllers/customRequestController.js'
 import multer from 'multer'
 import path from 'path'
+import { formLimiter } from '../middleware/rateLimiters.js'
+import validate from '../middleware/validate.js'
+import { customRequestRules } from '../validators/customRequestValidators.js'
 
 const router = express.Router()
 
@@ -27,13 +30,26 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     cb(null, true)
   } else {
-    cb('Images et PDF uniquement')
+    // multer attend une Error : lui passer une chaîne produisait un 500 opaque
+    // au lieu d'un refus lisible côté client.
+    cb(new Error('Images et PDF uniquement'))
   }
 }
 
-const upload = multer({ storage, fileFilter })
+const upload = multer({
+  storage,
+  fileFilter,
+  // Sans plafond, un envoi unique peut saturer le disque du serveur.
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+})
 
-// Route POST avec fichier
-router.post('/', upload.single('photos'), createCustomRequest)
+router.post(
+  '/',
+  formLimiter,
+  upload.single('photos'),
+  customRequestRules,
+  validate,
+  createCustomRequest
+)
 
 export default router
