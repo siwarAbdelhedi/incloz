@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Les deux applications sont vérifiées séparément : un changement qui ne touche
+# que le front ne relance pas la CI du back, et inversement.
+jobs:
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'backend/**'
+              - '.github/workflows/ci.yml'
+
+      - uses: actions/setup-node@v4
+        if: steps.changes.outputs.src == 'true'
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install
+        if: steps.changes.outputs.src == 'true'
+        working-directory: backend
+        run: npm ci
+
+      # TODO (phase 0 de la roadmap) : remplacer par `npm test` une fois Vitest
+      # et supertest en place. En attendant, on vérifie au moins que tous les
+      # modules se chargent — c'est ce qui aurait attrapé les imports cassés
+      # `adaptatioController` / `AdaptatioModel`.
+      - name: Vérifier le chargement des modules
+        if: steps.changes.outputs.src == 'true'
+        working-directory: backend
+        run: |
+          for f in src/routes/*.js; do
+            [ -s "$f" ] || continue
+            node --input-type=module -e "await import('./$f')"
+          done
+
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            src:
+              - 'frontend/**'
+              - '.github/workflows/ci.yml'
+
+      - uses: actions/setup-node@v4
+        if: steps.changes.outputs.src == 'true'
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install
+        if: steps.changes.outputs.src == 'true'
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        if: steps.changes.outputs.src == 'true'
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build
+        if: steps.changes.outputs.src == 'true'
+        working-directory: frontend
+        run: npm run build
+
+# --------------------------------------------------------------------------
+# DÉPLOIEMENT — à reconfigurer avant de couper les anciens dépôts.
+#
+# L'ancien workflow d'inclozB déployait sur un runner self-hosted :
+#     runs-on: self-hosted
+#     - run: echo "${{ secrets.ENV_FILE }}" > .env
+#     - run: pm2 restart inclozB
+#
+# Il n'est pas repris tel quel, pour deux raisons :
+#   1. un runner self-hosted est enregistré par dépôt — celui des anciens
+#      repos ne répondra pas ici, il faut en enregistrer un nouveau ;
+#   2. il déployait sans aucun test préalable. Le rebrancher ici doit se faire
+#      avec `needs: [backend, frontend]` pour qu'un échec de CI bloque la
+#      mise en production.
+#
+# Squelette une fois le runner enregistré et le secret ENV_FILE recréé :
+#
+#   deploy:
+#     needs: [backend, frontend]
+#     if: github.ref == 'refs/heads/main'
+#     runs-on: self-hosted
+#     steps:
+#       - uses: actions/checkout@v4
+#       - working-directory: backend
+#         run: |
+#           npm ci --omit=dev
+#           echo "${{ secrets.ENV_FILE }}" > .env
+#           pm2 restart incloz-api
+# --------------------------------------------------------------------------

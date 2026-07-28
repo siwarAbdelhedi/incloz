@@ -1,0 +1,61 @@
+# Stack de développement complète : base + API + front.
+#   docker compose up -d
+#   front  http://localhost:5173
+#   API    http://localhost:5000
+#
+# Le code est monté en volume : les modifications sont prises en compte à chaud.
+
+services:
+  mongo:
+    image: mongo:6
+    container_name: incloz-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: incloz-api
+    restart: unless-stopped
+    depends_on:
+      - mongo
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+      PORT: 5000
+      # Dans le réseau compose, la base est joignable par le nom du service.
+      MONGO_URI: mongodb://mongo:27017/incloz
+      JWT_SECRET: ${JWT_SECRET:-dev_local_secret_a_ne_pas_utiliser_en_prod}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+    volumes:
+      - ./backend/src:/app/src
+      # Les uploads disque survivent au redémarrage du conteneur.
+      - ./backend/uploads:/app/uploads
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: incloz-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "5173:5173"
+    environment:
+      # Ces URLs sont résolues par le navigateur, donc localhost et non "api".
+      VITE_API_URL: http://localhost:5000/api
+      VITE_IMG_URL: http://localhost:5000/uploads
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/index.html:/app/index.html
+
+volumes:
+  mongo-data:
