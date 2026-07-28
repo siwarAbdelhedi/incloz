@@ -21,38 +21,51 @@ import CGU from "./pages/CGU";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import NotFound from "./pages/NotFound";
+import AuthProvider from "./context/AuthProvider";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<HomeScreen />} />
-          <Route path="/boutique" element={<BoutiquePage />} />
-          <Route path="/panier" element={<Panier />} />
-          <Route path="/ContactForm" element={<ContactForm />} />
-          <Route path="/blog" element={<Blog />} />
-          <Route path="/about" element={<HistoryPage />}  />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/register" element={<RegisterForm />} />
-          <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="/custom-request" element={<CustomRequest />} />
+        {/* AuthProvider est à l'intérieur du Router : le header et
+            ProtectedRoute ont besoin des deux contextes. */}
+        <AuthProvider>
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomeScreen />} />
+            <Route path="/boutique" element={<BoutiquePage />} />
+            <Route path="/panier" element={<Panier />} />
+            <Route path="/ContactForm" element={<ContactForm />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/about" element={<HistoryPage />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<RegisterForm />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/custom-request" element={<CustomRequest />} />
 
-          {/* Pages légales : les composants existaient mais n'étaient routés
-              nulle part, donc inaccessibles depuis le site. */}
-          <Route path="/cgu" element={<CGU />} />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route
-            path="/politique-confidentialite"
-            element={<PolitiqueConfidentialite />}
-          />
+            {/* Pages légales : les composants existaient mais n'étaient routés
+                nulle part, donc inaccessibles depuis le site. */}
+            <Route path="/cgu" element={<CGU />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route
+              path="/politique-confidentialite"
+              element={<PolitiqueConfidentialite />}
+            />
 
-          {/* Sans ce filet, toute URL inconnue affichait une page blanche. */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Footer />
+            {/* Sans ce filet, toute URL inconnue affichait une page blanche. */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          <Footer />
+        </AuthProvider>
       </Router>
     </ThemeProvider>
   );

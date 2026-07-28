@@ -3,7 +3,7 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { API_URL } from "../../config/api";
-import { setStoredUser } from "../../utils/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "400px",
@@ -29,6 +29,7 @@ const StyledButton = styled(Button)(() => ({
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   // Pas de champ isAdmin ici : le rôle ne doit jamais être choisi par le
   // visiteur. Un compte admin se promeut via PUT /api/users/:id (admin only).
@@ -65,8 +66,8 @@ const RegisterForm = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      setStoredUser(data);
-      navigate("/dashboard");
+      login(data);
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       setError(err.message);
     }
