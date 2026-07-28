@@ -35,11 +35,17 @@ jobs:
         working-directory: backend
         run: npm ci
 
-      # TODO (phase 0 de la roadmap) : remplacer par `npm test` une fois Vitest
-      # et supertest en place. En attendant, on vérifie au moins que tous les
-      # modules se chargent — c'est ce qui aurait attrapé les imports cassés
-      # `adaptatioController` / `AdaptatioModel`.
-      - name: Vérifier le chargement des modules
+      # Les tests tournent contre un MongoDB en mémoire : pas de service à
+      # déclarer, pas de base à provisionner.
+      - name: Tests
+        if: steps.changes.outputs.src == 'true'
+        working-directory: backend
+        run: npm test
+
+      # Complément aux tests : tous les modules de routes doivent se charger,
+      # y compris ceux qui ne sont pas encore montés dans app.js. C'est ce qui
+      # aurait attrapé les imports cassés `adaptatioController` / `AdaptatioModel`.
+      - name: Vérifier le chargement des modules non montés
         if: steps.changes.outputs.src == 'true'
         working-directory: backend
         run: |
