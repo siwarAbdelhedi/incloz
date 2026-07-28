@@ -5,7 +5,7 @@ import {
   createAdaptation,
   deleteAdaptation,
   updateAdaptation,
-} from '../controllers/adaptatioController.js'
+} from '../controllers/adaptationController.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 
 const router = express.Router()

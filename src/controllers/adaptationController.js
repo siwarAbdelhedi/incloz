@@ -1,5 +1,5 @@
 import asyncHandler from 'express-async-handler'
-import Adaptatio from '../models/AdaptatioModel.js'
+import Adaptatio from '../models/adaptationModel.js'
 
 // @desc    Get all adaptations
 // @route   GET /api/adaptations
