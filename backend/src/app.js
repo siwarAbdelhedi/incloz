@@ -51,7 +51,23 @@ app.use('/api/custom-request', customRequestRoutes)
 
 // Uniquement les visuels du catalogue. Les pièces jointes des demandes
 // sur-mesure vivent dans private-uploads/, qui n'est volontairement pas ici.
-app.use('/uploads', express.static(PUBLIC_UPLOADS_DIR))
+//
+// helmet() pose `Cross-Origin-Resource-Policy: same-origin` sur toutes les
+// réponses. Or le site et l'API sont sur deux domaines distincts
+// (incloz.com et api.incloz.com, cf. la liste CORS ci-dessus) : le navigateur
+// refusait donc de charger les visuels produit, et le catalogue s'affichait
+// sans aucune image. Le durcissement ajouté avec helmet avait rendu ce dossier
+// inutilisable sans que rien ne le signale — ni erreur serveur, ni requête en
+// échec, seulement des images vides.
+//
+// La politique n'est ouverte que pour ce dossier, qui ne contient que des
+// visuels publics destinés à être affichés par le site. Toutes les autres
+// réponses de l'API conservent `same-origin`.
+app.use(
+  '/uploads',
+  helmet.crossOriginResourcePolicy({ policy: 'cross-origin' }),
+  express.static(PUBLIC_UPLOADS_DIR)
+)
 
 app.get('/', (req, res) => {
   res.send('incloz API is running....')

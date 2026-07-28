@@ -274,13 +274,21 @@ dans la roadmap.
   « mot de passe oublié » existe dans le formulaire de connexion.
 - Aucune durée de conservation n'est appliquée aux demandes sur-mesure ni à
   leurs photos.
+- **MongoDB tourne sans authentification.** C'est acceptable tant que la base
+  n'est joignable que depuis le loopback ou un réseau privé — mais c'est le seul
+  rempart. En production, activer une authentification (`MONGO_INITDB_ROOT_*` et
+  un utilisateur applicatif dédié) et ne jamais publier le port sur une
+  interface publique. La base de développement de ce projet a été vidée par un
+  robot le 28 juillet 2026 : elle était publiée sur `0.0.0.0:27017` sans mot de
+  passe. Une base ouverte est trouvée en quelques heures.
 - Dépendances obsolètes : Mongoose 5 (fin de vie, vulnérabilité critique
   d'injection), jsonwebtoken 8, multer 1.4.
 
 Déjà traité : `helmet`, limitation de débit, validation des entrées sur toutes
 les routes d'écriture, `POST /api/upload` réservé aux administrateurs, corps
 JSON et fichiers plafonnés, pièces jointes sorties du dossier public et
-réservées aux administrateurs.
+réservées aux administrateurs, port MongoDB de la stack de développement lié au
+loopback.
 
 ### Fonctionnel
 
