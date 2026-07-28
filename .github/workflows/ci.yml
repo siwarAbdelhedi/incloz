@@ -11,6 +11,12 @@ on:
 
 # Les deux applications sont vérifiées séparément : un changement qui ne touche
 # que le front ne relance pas la CI du back, et inversement.
+#
+# La version de Node vient de .nvmrc, pas d'un numéro écrit ici : c'est le même
+# fichier que lit `nvm use` en local. Une CI qui tourne sur une version
+# différente de celle des développeurs produit des échecs impossibles à
+# reproduire — c'est exactement ce qui est arrivé avec Node 20, dont le npm 10
+# résout l'arbre de dépendances autrement que le npm 11 livré avec Node 22+.
 jobs:
   backend:
     name: Backend
@@ -25,11 +31,12 @@ jobs:
             src:
               - 'backend/**'
               - '.github/workflows/ci.yml'
+              - '.nvmrc'
 
       - uses: actions/setup-node@v4
         if: steps.changes.outputs.src == 'true'
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
@@ -70,11 +77,12 @@ jobs:
             src:
               - 'frontend/**'
               - '.github/workflows/ci.yml'
+              - '.nvmrc'
 
       - uses: actions/setup-node@v4
         if: steps.changes.outputs.src == 'true'
         with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
