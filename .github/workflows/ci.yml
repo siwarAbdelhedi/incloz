@@ -1,10 +1,13 @@
 name: CI
 
+# dev est la branche d'intégration, main la branche de production. La CI doit
+# donc tourner sur les deux : sur les PRs qui entrent dans dev, et sur les PRs
+# de promotion dev -> main.
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 # Les deux applications sont vérifiées séparément : un changement qui ne touche
 # que le front ne relance pas la CI du back, et inversement.
@@ -105,11 +108,27 @@ jobs:
 #      avec `needs: [backend, frontend]` pour qu'un échec de CI bloque la
 #      mise en production.
 #
-# Squelette une fois le runner enregistré et le secret ENV_FILE recréé :
+# Avec le modèle main/dev, il y a deux cibles distinctes. Chacune a besoin de
+# son propre jeu de variables (base de données, JWT_SECRET, Cloudinary) : ne
+# jamais faire pointer la recette sur la base de production.
 #
-#   deploy:
+#   deploy-recette:
+#     needs: [backend, frontend]
+#     if: github.ref == 'refs/heads/dev'
+#     environment: recette              # secrets propres à l'environnement
+#     runs-on: self-hosted
+#     steps:
+#       - uses: actions/checkout@v4
+#       - working-directory: backend
+#         run: |
+#           npm ci --omit=dev
+#           echo "${{ secrets.ENV_FILE }}" > .env
+#           pm2 restart incloz-api-recette
+#
+#   deploy-production:
 #     needs: [backend, frontend]
 #     if: github.ref == 'refs/heads/main'
+#     environment: production
 #     runs-on: self-hosted
 #     steps:
 #       - uses: actions/checkout@v4

@@ -279,6 +279,42 @@ depuis ce dépôt.
 
 ---
 
+## Branches et environnements
+
+Deux branches longue durée :
+
+| Branche | Rôle | Ce qui s'y trouve |
+|---|---|---|
+| `main` | **Production** | Uniquement ce qui a été validé en recette |
+| `dev` | **Recette / intégration** | Les fonctionnalités en cours de validation |
+
+Le chemin d'une modification :
+
+```
+feat/ma-fonctionnalite  ──PR──>  dev  ──PR de promotion──>  main
+                                  ▲                          ▲
+                            validée en recette          mise en production
+```
+
+1. Brancher **depuis `dev`**, jamais depuis `main` :
+   `git checkout dev && git pull && git checkout -b feat/mon-sujet`
+2. Ouvrir la PR **vers `dev`**. La CI doit être verte pour merger.
+3. Valider le comportement sur la recette.
+4. Quand `dev` est jugée bonne, ouvrir une PR **`dev` → `main`**. C'est cette
+   PR qui déclenche la mise en production ; elle regroupe tout ce qui a été
+   validé depuis la dernière livraison.
+
+Ne jamais pousser directement sur `main` : elle ne doit contenir que ce qui est
+passé par `dev`. Un correctif urgent suit le même chemin — il est simplement
+promu tout de suite après avoir été mergé dans `dev`.
+
+Après une mise en production, `main` et `dev` sont identiques. Si un correctif a
+dû être appliqué directement sur `main`, le reporter sur `dev` (`git checkout dev
+&& git merge main`) pour éviter que les deux branches ne divergent.
+
+Chaque environnement a ses propres variables (base de données, `JWT_SECRET`,
+Cloudinary). La recette ne doit jamais pointer sur la base de production.
+
 ## Contribuer
 
 Une branche par sujet, préfixée par le type de changement :
