@@ -1,0 +1,24 @@
+# Dockerfile de développement pour le backend Node.js
+FROM node:18-alpine
+
+# Définir le répertoire de travail
+WORKDIR /app
+
+# Copier les fichiers de dépendances
+COPY package*.json ./
+
+# Installer toutes les dépendances (incluant devDependencies)
+RUN npm ci
+
+
+# Copier le code source
+COPY . .
+
+# Créer le dossier uploads s'il n'existe pas
+RUN mkdir -p uploads
+
+# Exposer le port
+EXPOSE 5000
+
+# Commande pour démarrer en mode développement
+CMD ["npm", "run", "dev"] 
