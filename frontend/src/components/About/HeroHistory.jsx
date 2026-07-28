@@ -15,7 +15,6 @@ const HeroContainer = styled(Box)(() => ({
   alignItems: "center",
   minHeight: "0vh",
   position: "relative",
-  fontFamily: "Decalotype, sans-serif",
 }));
 
 
@@ -40,7 +39,6 @@ const StyledButton = styled(Button)(() => ({
   padding: "10px 20px",
   fontSize: "16px",
   fontWeight: "bold",
-  fontFamily: "Decalotype, sans-serif",
   borderRadius: "20px",
   marginTop: "20px",
   boxShadow: "2px 2px 10px rgba(0,0,0,0.2)",

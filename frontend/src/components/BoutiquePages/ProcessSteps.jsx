@@ -61,20 +61,17 @@ const StepNumber = styled(Typography)({
   color: "#FD5C35",
   fontWeight: "bold",
   fontSize: "22px",
-  fontFamily: "Decalotype, sans-serif",
 });
 
 const StepTitle = styled(Typography)({
   fontWeight: "bold",
   fontSize: "16px",
-  fontFamily: "Decalotype, sans-serif",
   color: "#14235E",
   marginTop: "6px",
 });
 
 const StepDescription = styled(Typography)({
   fontSize: "14px",
-  fontFamily: "Decalotype, sans-serif",
   color: "#14235E",
   marginTop: "4px",
   textAlign: "center",
@@ -110,7 +107,6 @@ const ProcessSteps = () => {
         sx={{
           color: "#14235E",
           fontWeight: "bold",
-          fontFamily: "Decalotype, sans-serif",
           marginBottom: 4,
         }}
       >
@@ -143,7 +139,6 @@ const ProcessSteps = () => {
         sx={{
           color: "#14235E",
           fontWeight: "semibold",
-          fontFamily: "Decalotype, sans-serif",
           marginTop: 5,
         }}
       >
@@ -153,7 +148,6 @@ const ProcessSteps = () => {
         variant="subtitle1"
         sx={{
           color: "#14235E",
-          fontFamily: "Decalotype, sans-serif",
           fontStyle: "italic",
         }}
       >
@@ -169,7 +163,6 @@ const ProcessSteps = () => {
         variant="h6"
         sx={{
           color: "#14235E",
-          fontFamily: "Decalotype, sans-serif",
           fontStyle: "italic",
           mt: 2,
           textAlign: "right",

@@ -31,7 +31,6 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Decalotype", "Roboto", "Arial", sans-serif',
     h5: {
       fontWeight: 700,
       color: "#14235E",

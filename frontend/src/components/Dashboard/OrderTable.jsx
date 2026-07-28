@@ -11,17 +11,17 @@ const OrderTable = () => {
       <Table>
         <TableHead sx={{ backgroundColor: '#14235E' }}>
           <TableRow>
-            <TableCell sx={{ color: '#FFF', fontFamily: 'Decalotype' }}>Client</TableCell>
-            <TableCell sx={{ color: '#FFF', fontFamily: 'Decalotype' }}>Montant</TableCell>
-            <TableCell sx={{ color: '#FFF', fontFamily: 'Decalotype' }}>Statut</TableCell>
+            <TableCell sx={{ color: '#FFF' }}>Client</TableCell>
+            <TableCell sx={{ color: '#FFF' }}>Montant</TableCell>
+            <TableCell sx={{ color: '#FFF' }}>Statut</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {orders.map((order) => (
             <TableRow key={order.id}>
-              <TableCell sx={{ fontFamily: 'Decalotype' }}>{order.client}</TableCell>
-              <TableCell sx={{ fontFamily: 'Decalotype' }}>{order.total}</TableCell>
-              <TableCell sx={{ fontFamily: 'Decalotype' }}>{order.statut}</TableCell>
+              <TableCell>{order.client}</TableCell>
+              <TableCell>{order.total}</TableCell>
+              <TableCell>{order.statut}</TableCell>
             </TableRow>
           ))}
         </TableBody>

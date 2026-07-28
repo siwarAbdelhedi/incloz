@@ -51,7 +51,6 @@ const NavButtons = styled(Box)(({ theme }) => ({
 
 const StyledButton = styled(Button)({
   color: "#14235E",
-  fontFamily: "Decalotype, sans-serif",
   fontSize: "16px",
   fontWeight: "bold",
   textTransform: "none",
@@ -63,7 +62,6 @@ const StyledButton = styled(Button)({
 const ConnectButton = styled(Button)({
   backgroundColor: "#FD4802",
   color: "#FFF6EB",
-  fontFamily: "Decalotype, sans-serif",
   fontSize: "16px",
   fontWeight: "bold",
   textTransform: "none",
@@ -198,7 +196,6 @@ function Header() {
                     fontWeight: "bold",
                     textAlign: "center",
                     color: "#14235E",
-                    fontFamily: "Decalotype, sans-serif",
                   }}
                 />
               </ListItem>
@@ -217,7 +214,6 @@ function Header() {
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#14235E",
-                      fontFamily: "Decalotype, sans-serif",
                     }}
                   />
                 </ListItem>
@@ -228,7 +224,6 @@ function Header() {
                       fontWeight: "bold",
                       textAlign: "center",
                       color: "#FD4802",
-                      fontFamily: "Decalotype, sans-serif",
                     }}
                   />
                 </ListItem>
@@ -246,7 +241,6 @@ function Header() {
                     fontWeight: "bold",
                     textAlign: "center",
                     color: "#14235E",
-                    fontFamily: "Decalotype, sans-serif",
                   }}
                 />
               </ListItem>

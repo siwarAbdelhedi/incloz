@@ -46,7 +46,6 @@ const members = [
           fontWeight="bold"
           sx={{
             mb: 6,
-            fontFamily: "Decalotype, sans-serif",
             color: "white",
           }}
         >

@@ -1,6 +1,21 @@
-/* Importing Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Your-Alternative-Font&display=swap');
+/* La police et les couleurs sont définies dans src/theme.js et appliquées par
+   le ThemeProvider de MUI. Ce fichier ne garde que les quelques règles globales
+   qui ne peuvent pas passer par le thème.
 
-body {
-    font-family: 'Decalotype', sans-serif;
+   Il contenait auparavant un import de police nommée « Your-Alternative-Font »,
+   placeholder de gabarit jamais remplacé, et forçait `font-family: Decalotype`
+   sur le body alors que cette police n'a jamais été chargée. */
+
+/* Le défilement par ancre ne doit pas cacher la cible sous la barre fixe. */
+html {
+  scroll-padding-top: 80px;
+}
+
+/* Le focus clavier doit rester visible partout : c'est la base de la navigation
+   sans souris. Un style explicite évite de dépendre du défaut du navigateur,
+   que MUI neutralise sur plusieurs de ses composants. */
+:focus-visible {
+  outline: 3px solid #14235e;
+  outline-offset: 2px;
+  border-radius: 2px;
 }

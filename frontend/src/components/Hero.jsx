@@ -68,7 +68,6 @@ const Hero = () => {
           sx={{
             fontWeight: "bold",
             color: "#14235E",
-            fontFamily: "Decalotype, sans-serif",
             fontSize: { xs: "1.75rem", sm: "2.5rem", md: "3rem" },
           }}
         >
