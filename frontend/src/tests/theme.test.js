@@ -104,10 +104,11 @@ describe('Typographie', () => {
 
 describe('Mise en page', () => {
   // Les pages appliquaient toutes `marginTop: '70px'` pour compenser la barre
-  // fixe. Mesurée dans le navigateur, elle fait 72px sous md et 80px au-delà :
-  // la valeur était fausse aux deux breakpoints.
+  // fixe. Mesurée dans un navigateur sur dix largeurs de fenêtre, elle fait
+  // 56px jusqu'à 599px puis 64px : le palier est `sm`, pas `md`. La première
+  // estimation posée avec la charte (72/80px) dépassait de 16px.
   it('expose la hauteur réelle de la barre fixe', () => {
-    expect(theme.layout.headerOffset).toEqual({ xs: '72px', md: '80px' })
+    expect(theme.layout.headerOffset).toEqual({ xs: '56px', sm: '64px' })
   })
 
   it('expose un rayon unique pour les boutons pilule', () => {

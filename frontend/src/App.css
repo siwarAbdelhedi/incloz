@@ -6,9 +6,11 @@
    placeholder de gabarit jamais remplacé, et forçait `font-family: Decalotype`
    sur le body alors que cette police n'a jamais été chargée. */
 
-/* Le défilement par ancre ne doit pas cacher la cible sous la barre fixe. */
+/* Le défilement par ancre ne doit pas cacher la cible sous la barre fixe.
+   Aligné sur theme.layout.headerOffset : la barre fait 64px à partir de 600px
+   de large. */
 html {
-  scroll-padding-top: 80px;
+  scroll-padding-top: 64px;
 }
 
 /* Le focus clavier doit rester visible partout : c'est la base de la navigation
@@ -18,4 +20,35 @@ html {
   outline: 3px solid #14235e;
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+/* Lien d'évitement : hors écran tant qu'il n'a pas le focus, il apparaît dès la
+   première tabulation. Il n'est volontairement caché ni par `display: none` ni
+   par `visibility: hidden` : ces deux propriétés le sortiraient aussi de
+   l'ordre de tabulation, donc le rendraient inatteignable — c'est l'erreur
+   classique sur ce motif. */
+.lien-evitement {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2000;
+  transform: translateY(-200%);
+  padding: 0.75rem 1.25rem;
+  background-color: #14235e;
+  color: #fff6eb;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom-right-radius: 8px;
+}
+
+.lien-evitement:focus {
+  transform: translateY(0);
+}
+
+/* Le glissement n'est joué que si l'utilisateur n'a pas demandé moins
+   d'animations. */
+@media (prefers-reduced-motion: no-preference) {
+  .lien-evitement {
+    transition: transform 150ms ease-in-out;
+  }
 }

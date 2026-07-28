@@ -108,8 +108,10 @@ function Header() {
           </Box>
         </Box>
 
-        {/* Center: Navigation */}
-        <NavButtons>
+        {/* Center: Navigation. L'AppBar rend déjà un <header> (rôle banner) ;
+            c'est ce bloc qui doit porter le rôle de navigation pour qu'un
+            lecteur d'écran puisse y sauter directement. */}
+        <NavButtons component="nav" aria-label="Navigation principale">
           {pages.map((page) => (
             <StyledButton key={page.label} component={Link} to={page.path}>
               {page.label}
@@ -181,7 +183,9 @@ function Header() {
             <CloseIcon />
           </IconButton>
 
-          <List>
+          {/* Le tiroir n'est monté que lorsqu'il est ouvert : il n'y a donc
+              jamais deux navigations exposées en même temps. */}
+          <List component="nav" aria-label="Navigation principale">
             {pages.map((page) => (
               <ListItem
                 button

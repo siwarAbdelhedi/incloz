@@ -140,8 +140,7 @@ const ProductDetail = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ backgroundColor: "#FFF6EB", minHeight: "100vh", py: 4, marginTop: '70px'
-}}>
+      <Box sx={{ backgroundColor: "#FFF6EB", minHeight: "100vh", py: 4 }}>
         <Container maxWidth="lg">
           <Grid container spacing={6}>
             <Grid item xs={12} md={5} lg={4}>
@@ -157,7 +156,9 @@ const ProductDetail = () => {
             </Grid>
 
             <Grid item xs={12} md={7} lg={8}>
-              <Typography variant="h5">{product.title}</Typography>
+              {/* Le nom du produit est le sujet de la page : c'est lui le
+                  titre de premier niveau. */}
+              <Typography variant="h5" component="h1">{product.title}</Typography>
               <Typography variant="subtitle1">{product.subtitle}</Typography>
               <Typography color="secondary.main" fontSize="1.75rem" fontWeight="bold" mb={3}>
                 {product.price} €

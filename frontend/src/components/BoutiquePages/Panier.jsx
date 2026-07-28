@@ -44,14 +44,14 @@ const Panier = () => {
     cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
-    <Box sx={{ p: 4, backgroundColor: "#FFF6EB", minHeight: "100vh", marginTop: '70px'
-    }}>
+    <Box sx={{ p: 4, backgroundColor: "#FFF6EB", minHeight: "100vh" }}>
       <Button component={Link} to="/boutique" sx={{ color: "#FD4802", mb: 3 }}>
         Retourner à la boutique
       </Button>
 
       <Typography
         variant="h4"
+        component="h1"
         sx={{ fontWeight: "bold", color: "#14235E", mb: 4 }}
       >
         Votre panier

@@ -80,7 +80,7 @@ const LoginForm = () => {
 
   return (
     <StyledForm component="form" onSubmit={handleLogin}>
-      <Typography variant="h5" color="#14235E" fontWeight="bold" gutterBottom>
+      <Typography variant="h5" component="h1" color="#14235E" fontWeight="bold" gutterBottom>
         Connexion
       </Typography>
 

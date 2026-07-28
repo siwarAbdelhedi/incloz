@@ -5,7 +5,6 @@ const NotFound = () => (
   <Box
     sx={{
       minHeight: "60vh",
-      mt: "70px",
       px: 2,
       display: "flex",
       flexDirection: "column",
@@ -15,8 +14,10 @@ const NotFound = () => (
       backgroundColor: "#FFF6EB",
     }}
   >
-    <Typography variant="h3" sx={{ color: "#14235E", fontWeight: "bold", mb: 1 }}>
-      404
+    {/* Un « 404 » seul ne dit rien à un lecteur d'écran, qui annoncerait
+        « titre de niveau 1, 404 ». Le titre porte donc aussi le sens. */}
+    <Typography variant="h3" component="h1" sx={{ color: "#14235E", fontWeight: "bold", mb: 1 }}>
+      404 — Page introuvable
     </Typography>
     <Typography sx={{ color: "#232A45", mb: 3 }}>
       Cette page n&apos;existe pas ou a été déplacée.

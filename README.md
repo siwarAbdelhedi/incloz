@@ -107,13 +107,17 @@ dur : on passe par `theme.palette.*` ou l'attribut `sx`.
 | `primary.dark` | `#B32E00` | Texte et liens orange sur fond clair |
 | `secondary.main` | `#14235E` | Navy de marque |
 | `brand.cream` / `peach` / `sand` | `#FFF6EB` / `#FFE5CF` / `#FCDAAF` | Les trois fonds de la charte |
-| `layout.headerOffset` | `72px` / `80px` | Hauteur réelle de la barre fixe |
+| `layout.headerOffset` | `56px` / `64px` | Hauteur réelle de la barre fixe (palier à 600px) |
 
 L'orange d'origine `#FD4802` plafonne à 3,44:1 avec du texte blanc, sous le seuil
 WCAG AA de 4,5:1. `primary.main` en est une version à peine assombrie qui atteint
 4,52:1 ; la teinte d'origine reste disponible en `primary.light` pour les aplats
 qui ne portent pas de texte. `frontend/src/tests/theme.test.js` revérifie ces
 contrastes à chaque exécution des tests.
+
+`layout.headerOffset` est consommé à un seul endroit — le `<main>` d'`App.jsx`.
+Aucune page ne doit compenser la barre fixe elle-même ; `layout.test.jsx` échoue
+si l'une s'y remet.
 
 La police de marque est **Outfit**, auto-hébergée via
 `@fontsource-variable/outfit` — aucune requête vers un domaine tiers, donc pas de
@@ -280,6 +284,10 @@ réservées aux administrateurs.
 
 ### Fonctionnel
 
+- La barre fixe se replie sur deux lignes (88px au lieu de 64px) dans une
+  fenêtre large de **900 à 904px** : à cette largeur exacte, le menu de bureau
+  vient de s'afficher mais ne tient pas encore. Le contenu passe alors sous la
+  barre. Fenêtre étroite, mais réelle — à traiter avec la refonte du header.
 - **Aucune commande, aucun paiement.** `orderController.js`,
   `paymentController.js`, `orderRoutes.js`, `paymentRoutes.js` et
   `paymentModel.js` sont des fichiers vides. Le site ne peut rien vendre en

@@ -61,10 +61,13 @@ const StyledButton = styled(Button)(() => ({
 
 const Hero = () => {
   return (
-    <HeroContainer sx={{ marginTop: '70px' }}>
+    <HeroContainer>
       <TextContainer>
+        {/* Titre principal de l'accueil. `component` porte la sémantique,
+            `variant` l'apparence : le rendu est inchangé. */}
         <Typography
           variant="h2"
+          component="h1"
           sx={{
             fontWeight: "bold",
             color: "#14235E",

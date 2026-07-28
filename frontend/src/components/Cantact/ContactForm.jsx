@@ -81,7 +81,7 @@ const ContactForm = () => {
             height: "100%", 
           }}
         >
-          <Typography variant="h4" color="#FD5C35" fontWeight="bold" gutterBottom>
+          <Typography variant="h4" component="h1" color="#FD5C35" fontWeight="bold" gutterBottom>
             Contactez-nous
           </Typography>
           <Typography variant="body1" marginBottom={2}>
