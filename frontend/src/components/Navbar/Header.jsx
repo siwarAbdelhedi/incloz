@@ -14,8 +14,12 @@ import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.png";
+import { useAuth } from "../../hooks/useAuth";
+
+// Le nom complet déborde de la barre : on n'affiche que le prénom.
+const prenomDe = (user) => (user?.name || "").trim().split(" ")[0];
 
 const pages = [
   { label: "Qui sommes nous ?", path: "/about" },
@@ -72,9 +76,18 @@ const ConnectButton = styled(Button)({
 
 function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user, estConnecte, logout } = useAuth();
+  const navigate = useNavigate();
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setMobileOpen(false);
+    // Retour à l'accueil : la page courante peut être devenue inaccessible.
+    navigate("/");
   };
 
   return (
@@ -106,16 +119,33 @@ function Header() {
           ))}
         </NavButtons>
 
-        {/* Right: Se connecter + panier */}
+        {/* Right: session + panier */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <ConnectButton
-            variant="contained"
-            component={Link}
-            to="/login"
-            sx={{ display: { xs: "none", md: "block" } }}
-          >
-            Se connecter
-          </ConnectButton>
+          {estConnecte ? (
+            <Box
+              sx={{
+                display: { xs: "none", md: "flex" },
+                alignItems: "center",
+                gap: 1,
+              }}
+            >
+              <StyledButton component={Link} to="/dashboard">
+                Bonjour, {prenomDe(user)}
+              </StyledButton>
+              <ConnectButton variant="contained" onClick={handleLogout}>
+                Déconnexion
+              </ConnectButton>
+            </Box>
+          ) : (
+            <ConnectButton
+              variant="contained"
+              component={Link}
+              to="/login"
+              sx={{ display: { xs: "none", md: "block" } }}
+            >
+              Se connecter
+            </ConnectButton>
+          )}
           <IconButton
             component={Link}
             to="/panier"
@@ -173,22 +203,54 @@ function Header() {
                 />
               </ListItem>
             ))}
-            <ListItem
-              button
-              component={Link}
-              to="/login"
-              onClick={toggleDrawer}
-            >
-              <ListItemText
-                primary="Se connecter"
-                primaryTypographyProps={{
-                  fontWeight: "bold",
-                  textAlign: "center",
-                  color: "#14235E",
-                  fontFamily: "Decalotype, sans-serif",
-                }}
-              />
-            </ListItem>
+            {estConnecte ? (
+              <>
+                <ListItem
+                  button
+                  component={Link}
+                  to="/dashboard"
+                  onClick={toggleDrawer}
+                >
+                  <ListItemText
+                    primary={`Bonjour, ${prenomDe(user)}`}
+                    primaryTypographyProps={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      color: "#14235E",
+                      fontFamily: "Decalotype, sans-serif",
+                    }}
+                  />
+                </ListItem>
+                <ListItem button onClick={handleLogout}>
+                  <ListItemText
+                    primary="Déconnexion"
+                    primaryTypographyProps={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                      color: "#FD4802",
+                      fontFamily: "Decalotype, sans-serif",
+                    }}
+                  />
+                </ListItem>
+              </>
+            ) : (
+              <ListItem
+                button
+                component={Link}
+                to="/login"
+                onClick={toggleDrawer}
+              >
+                <ListItemText
+                  primary="Se connecter"
+                  primaryTypographyProps={{
+                    fontWeight: "bold",
+                    textAlign: "center",
+                    color: "#14235E",
+                    fontFamily: "Decalotype, sans-serif",
+                  }}
+                />
+              </ListItem>
+            )}
           </List>
         </Box>
       </Drawer>

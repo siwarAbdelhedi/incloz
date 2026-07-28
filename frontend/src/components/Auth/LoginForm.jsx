@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Box, TextField, Button, Typography, } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { API_URL } from "../../config/api";
-import { setStoredUser } from "../../utils/auth";
+import { useAuth } from "../../hooks/useAuth";
 
 
 const StyledForm = styled(Box)(({ theme }) => ({
@@ -31,6 +31,8 @@ const StyledButton = styled(Button)(() => ({
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -64,12 +66,14 @@ const LoginForm = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      setStoredUser(data);
+      login(data);
 
-      // /dashboard aiguille lui-même vers la vue admin ou utilisateur.
-      // Les anciennes cibles /admin/dashboard et /user/dashboard n'ont jamais
-      // existé dans le routeur : la connexion menait à une page blanche.
-      navigate("/dashboard");
+      // Retour sur la page qui a déclenché la redirection vers /login, sinon
+      // le tableau de bord — qui aiguille lui-même vers la vue admin ou
+      // utilisateur. Les anciennes cibles /admin/dashboard et /user/dashboard
+      // n'ont jamais existé dans le routeur : la connexion menait à une page
+      // blanche.
+      navigate(location.state?.from || "/dashboard", { replace: true });
     } catch (err) {
       setError(err.message);
     }

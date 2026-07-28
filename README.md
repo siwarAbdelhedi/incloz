@@ -92,9 +92,11 @@ présentes dans `backend/uploads/`.
 ## Tests
 
 ```bash
-npm --prefix backend test          # une fois
-npm --prefix backend run test:watch
+npm --prefix backend test          # API
+npm --prefix frontend test         # interface
 ```
+
+### API
 
 Vitest + supertest. Les tests tournent contre un **MongoDB en mémoire**
 (`mongodb-memory-server`) : rien à installer, aucune base réelle touchée, et
@@ -104,12 +106,18 @@ L'API est instanciée sans ouvrir de port : `src/app.js` construit et exporte
 l'application Express, `src/server.js` se contente de charger l'environnement,
 de connecter MongoDB et d'écouter. C'est ce découpage qui rend l'API testable.
 
-Couverture actuelle — 28 tests sur l'authentification et les autorisations :
-inscription, connexion, invariants du hachage des mots de passe, middleware
-`protect` (jeton absent, invalide, sans préfixe `Bearer`, compte supprimé),
-accès aux produits, à la liste des comptes et au panier.
+63 tests : inscription, connexion, invariants du hachage des mots de passe,
+middleware `protect` (jeton absent, invalide, sans préfixe `Bearer`, compte
+supprimé), accès aux produits, à la liste des comptes et au panier, en-têtes de
+sécurité, limitation de débit, validation des entrées, et confidentialité des
+pièces jointes des demandes sur-mesure.
 
-Le front n'a pas encore de tests.
+### Interface
+
+Vitest + Testing Library, dans un DOM simulé (jsdom). 13 tests sur la session :
+état du header selon qu'on est connecté ou non, déconnexion, redirections de
+`<ProtectedRoute>`, restauration de la session après rechargement, et tolérance
+à un stockage corrompu.
 
 ## Scripts
 
@@ -117,6 +125,7 @@ Le front n'a pas encore de tests.
 |---|---|
 | `npm run setup` | Installe les dépendances des deux applications |
 | `npm --prefix backend test` | Tests de l'API |
+| `npm --prefix frontend test` | Tests de l'interface |
 | `npm run dev` | Lance l'API et le front en parallèle |
 | `npm run dev:api` / `npm run dev:web` | Lance une seule des deux |
 | `npm run lint` | ESLint sur le front |
@@ -245,10 +254,11 @@ réservées aux administrateurs.
 - Le panier ne quitte pas le navigateur et **les prix y sont stockés côté
   client**, donc modifiables. À rebrancher sur `/api/cart` avec un calcul du
   montant côté serveur avant toute vente.
-- Le header ne sait pas qu'un utilisateur est connecté : « Se connecter » reste
-  affiché et il n'existe aucun bouton de déconnexion.
 - Pas de parcours « mot de passe oublié », alors que le lien existe dans le
   formulaire de connexion.
+- Le lien « Nos adaptations » du menu pointe vers `/adaptations`, une page qui
+  n'existe pas — le visiteur tombe sur le 404. Le modèle et le contrôleur
+  existent côté API mais la route n'est pas montée et l'écran n'est pas écrit.
 - Les pages légales (CGU, mentions légales, politique de confidentialité) sont
   accessibles mais ne contiennent qu'un titre.
 
