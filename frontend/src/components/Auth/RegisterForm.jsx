@@ -105,6 +105,8 @@ const RegisterForm = () => {
         required
       />
 
+      {/* Le minimum est aussi appliqué côté API : autant le dire avant l'envoi
+          plutôt que de renvoyer l'utilisateur sur un message d'erreur. */}
       <TextField
         fullWidth
         label="Mot de passe"
@@ -114,6 +116,8 @@ const RegisterForm = () => {
         onChange={handleChange}
         margin="normal"
         required
+        inputProps={{ minLength: 8 }}
+        helperText="8 caractères minimum"
       />
 
       <StyledButton fullWidth type="submit">
