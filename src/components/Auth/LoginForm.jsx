@@ -3,6 +3,8 @@ import { Box, TextField, Button, Typography, } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { API_URL } from "../../config/api";
+import { setStoredUser } from "../../utils/auth";
 
 
 const StyledForm = styled(Box)(({ theme }) => ({
@@ -42,14 +44,13 @@ const LoginForm = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));0
+    }));
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-    //   const res = await fetch("http://localhost:5000/api/users/login", {
-      const res = await fetch("https://api.incloz.com/api/users/login", {
+      const res = await fetch(`${API_URL}/users/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -63,14 +64,12 @@ const LoginForm = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      setStoredUser(data);
 
-      // Redirection selon rôle
-      if (data.isAdmin) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/dashboard");
-      }
+      // /dashboard aiguille lui-même vers la vue admin ou utilisateur.
+      // Les anciennes cibles /admin/dashboard et /user/dashboard n'ont jamais
+      // existé dans le routeur : la connexion menait à une page blanche.
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }

@@ -1,14 +1,9 @@
 import { useState } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-} from "@mui/material";
+import { Box, TextField, Button, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../config/api";
+import { setStoredUser } from "../../utils/auth";
 
 const StyledForm = styled(Box)(({ theme }) => ({
   maxWidth: "400px",
@@ -35,28 +30,28 @@ const StyledButton = styled(Button)(() => ({
 const RegisterForm = () => {
   const navigate = useNavigate();
 
+  // Pas de champ isAdmin ici : le rôle ne doit jamais être choisi par le
+  // visiteur. Un compte admin se promeut via PUT /api/users/:id (admin only).
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    isAdmin: false,
   });
 
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      // const res = await fetch("http://localhost:5000/api/users", {
-      const res = await fetch("https://api.incloz.com/api/users", {
+      const res = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,14 +65,8 @@ const RegisterForm = () => {
         throw new Error(data.message || "Registration failed");
       }
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
-
-      // Redirection selon rôle
-      if (data.isAdmin) {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/dashboard");
-      }
+      setStoredUser(data);
+      navigate("/dashboard");
     } catch (err) {
       setError(err.message);
     }
@@ -125,18 +114,6 @@ const RegisterForm = () => {
         onChange={handleChange}
         margin="normal"
         required
-      />
-
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={formData.isAdmin}
-            onChange={handleChange}
-            name="isAdmin"
-            color="primary"
-          />
-        }
-        label="Je suis un administrateur"
       />
 
       <StyledButton fullWidth type="submit">

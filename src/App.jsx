@@ -17,6 +17,10 @@ import LoginForm from "./components/Auth/LoginForm";
 import RegisterForm from "./components/Auth/RegisterForm";
 import ProductDetail from "./components/BoutiquePages/ProductDetail";
 import CustomRequest from "./components/Forms/CustomRequest";
+import CGU from "./pages/CGU";
+import MentionsLegales from "./pages/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   return (
@@ -34,7 +38,19 @@ const App = () => {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          <Route path="custom-request" element={<CustomRequest />} />
+          <Route path="/custom-request" element={<CustomRequest />} />
+
+          {/* Pages légales : les composants existaient mais n'étaient routés
+              nulle part, donc inaccessibles depuis le site. */}
+          <Route path="/cgu" element={<CGU />} />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route
+            path="/politique-confidentialite"
+            element={<PolitiqueConfidentialite />}
+          />
+
+          {/* Sans ce filet, toute URL inconnue affichait une page blanche. */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </Router>

@@ -1,10 +1,12 @@
 // UserDashboard.jsx
 import { Box, Typography } from '@mui/material';
+import PropTypes from 'prop-types';
 import Sidebar from './Sidebar';
 
 const UserDashboard = ({ user }) => {
+  // mt: 70px pour passer sous la navbar fixe, comme les autres pages
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', fontFamily: 'Decalotype' }}>
+    <Box sx={{ display: 'flex', mt: '70px', minHeight: '100vh', fontFamily: 'Decalotype' }}>
       <Sidebar />
       <Box sx={{ flexGrow: 1, p: 4, backgroundColor: '#FCDAAF' }}>
         <Typography variant="h4" sx={{ color: '#14235E', mb: 2 }}>
@@ -16,6 +18,12 @@ const UserDashboard = ({ user }) => {
       </Box>
     </Box>
   );
+};
+
+UserDashboard.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+  }).isRequired,
 };
 
 export default UserDashboard;

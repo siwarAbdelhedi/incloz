@@ -1,8 +1,10 @@
 import { Box, Typography, Paper } from '@mui/material';
+import PropTypes from 'prop-types';
 
 const AdminDashboard = ({ user }) => {
+  // mt: 70px pour passer sous la navbar fixe, comme les autres pages
   return (
-    <Box sx={{ p: 4, backgroundColor: '#FCDAAF', minHeight: '100vh' }}>
+    <Box sx={{ p: 4, mt: '70px', backgroundColor: '#FCDAAF', minHeight: '100vh' }}>
       <Typography variant="h4" sx={{ fontFamily: 'Decalotype', color: '#14235E', mb: 3 }}>
         Bienvenue, {user.name}
       </Typography>
@@ -16,6 +18,12 @@ const AdminDashboard = ({ user }) => {
       </Paper>
     </Box>
   );
+};
+
+AdminDashboard.propTypes = {
+  user: PropTypes.shape({
+    name: PropTypes.string,
+  }).isRequired,
 };
 
 export default AdminDashboard;

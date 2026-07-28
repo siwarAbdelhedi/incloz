@@ -1,4 +1,5 @@
 import { Box, Container, Grid, Typography, Link, IconButton } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 import { styled } from "@mui/material/styles";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -96,11 +97,19 @@ const Footer = () => {
               <Box>
                 <FooterTitle>Incloz</FooterTitle>
                 <Box display="flex" flexDirection="column">
-                  <FooterLink href="#">Notre histoire</FooterLink>
-                  <FooterLink href="#">Notre équipe</FooterLink>
+                  <FooterLink component={RouterLink} to="/about">
+                    Notre histoire
+                  </FooterLink>
+                  <FooterLink component={RouterLink} to="/about">
+                    Notre équipe
+                  </FooterLink>
                   <FooterLink href="#">Nos partenaires</FooterLink>
-                  <FooterLink href="#">La boutique</FooterLink>
-                  <FooterLink href="#">Notre blog</FooterLink>
+                  <FooterLink component={RouterLink} to="/boutique">
+                    La boutique
+                  </FooterLink>
+                  <FooterLink component={RouterLink} to="/blog">
+                    Notre blog
+                  </FooterLink>
                 </Box>
               </Box>
             </Grid>
@@ -110,14 +119,22 @@ const Footer = () => {
               <Box>
                 <FooterTitle>Conditions</FooterTitle>
                 <Box display="flex" flexDirection="column">
-                  <FooterLink href="#">Mentions légales</FooterLink>
-                  <FooterLink href="#">
+                  <FooterLink component={RouterLink} to="/mentions-legales">
+                    Mentions légales
+                  </FooterLink>
+                  <FooterLink component={RouterLink} to="/cgu">
                     Conditions générales d&apos;utilisation
                   </FooterLink>
+                  {/* Les CGV restent à rédiger : pas de page à lier pour l'instant. */}
                   <FooterLink href="#">
                     Conditions générales de vente
                   </FooterLink>
-                  <FooterLink href="#">Politique de confidentialité</FooterLink>
+                  <FooterLink
+                    component={RouterLink}
+                    to="/politique-confidentialite"
+                  >
+                    Politique de confidentialité
+                  </FooterLink>
                 </Box>
               </Box>
             </Grid>

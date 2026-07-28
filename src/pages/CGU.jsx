@@ -1,3 +1,3 @@
 export default function CGU() {
-    return <h1>Conditions Générales d'Utilisation</h1>;
-  }  
+  return <h1>Conditions Générales d&apos;Utilisation</h1>;
+}
