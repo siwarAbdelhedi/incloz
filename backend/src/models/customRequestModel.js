@@ -21,7 +21,17 @@ const customRequestSchema = new mongoose.Schema(
     cuisse: { type: Number },
     entrejambe: { type: Number },
 
-    photos: { type: String }, 
+    photos: { type: String },
+
+    // Preuve du consentement. Le règlement demande de pouvoir démontrer non
+    // seulement qu'une personne a consenti, mais à quoi : l'horodatage seul ne
+    // suffit pas, la version du texte accepté est conservée avec lui.
+    consentementLe: { type: Date, required: true },
+    versionPolitique: { type: String, required: true },
+
+    // Date au-delà de laquelle la fiche et sa photo doivent être supprimées.
+    // Voir config/conservation.js et scripts/purgerDemandes.js.
+    expireLe: { type: Date, required: true, index: true },
   },
   {
     timestamps: true,

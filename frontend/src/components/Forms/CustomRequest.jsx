@@ -1,22 +1,40 @@
-import { Box, Typography, TextField, Button, Grid, MenuItem } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Link,
+  MenuItem,
+} from "@mui/material";
 import { useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import bgPattern from "../../assets/photo2.png";
 import axios from "axios";
+import { DUREE_CONSERVATION_MOIS } from "../../config/entreprise";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+const CHAMPS_VIDES = {
+  nom: "", prenom: "", email: "", telephone: "",
+  rue: "", ville: "", codePostal: "", typeVetement: "",
+  taille: "", hanches: "", cuisse: "", entrejambe: "",
+  photos: null,
+  // Jamais pré-cochée : un consentement pré-coché n'en est pas un.
+  consentement: false,
+};
+
 const CustomRequest = () => {
-  const [formData, setFormData] = useState({
-    nom: "", prenom: "", email: "", telephone: "",
-    rue: "", ville: "", codePostal: "", typeVetement: "",
-    taille: "", hanches: "", cuisse: "", entrejambe: "",
-    photos: null,
-  });
+  const [formData, setFormData] = useState(CHAMPS_VIDES);
 
   const [fileName, setFileName] = useState("");
+  const [erreur, setErreur] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, files, type, checked } = e.target;
     if (files) {
       setFileName(files[0].name);
       setFormData({
@@ -26,13 +44,15 @@ const CustomRequest = () => {
     } else {
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: type === "checkbox" ? checked : value,
       });
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErreur("");
+
     const data = new FormData();
     Object.entries(formData).forEach(([key, value]) => data.append(key, value));
 
@@ -41,15 +61,18 @@ const CustomRequest = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       alert("Demande envoyée !");
-      setFormData({
-        nom: "", prenom: "", email: "", telephone: "",
-        rue: "", ville: "", codePostal: "", typeVetement: "",
-        taille: "", hanches: "", cuisse: "", entrejambe: "",
-        photos: null,
-      });
+      setFormData(CHAMPS_VIDES);
       setFileName("");
     } catch (err) {
-      console.error("Erreur", err);
+      // L'API refuse désormais une demande sans consentement. Sans ce retour,
+      // le refus serait invisible : le visiteur repartirait en croyant sa
+      // demande envoyée. Les autres retours du formulaire — état d'envoi,
+      // champs obligatoires, remplacement de l'alerte — relèvent de la refonte
+      // des formulaires.
+      setErreur(
+        err.response?.data?.message ??
+          "L’envoi a échoué. Vérifiez votre connexion et réessayez."
+      );
     }
   };
 
@@ -152,6 +175,53 @@ const CustomRequest = () => {
               </Box>
               <Typography variant="caption" mt={1} display="block">Formats : png, jpeg, pdf</Typography>
             </Grid>
+
+            {/* Les mensurations et la photo peuvent révéler une situation de
+                handicap : elles ne peuvent être traitées que sur consentement
+                exprès. La case est obligatoire et n'est jamais pré-cochée, et
+                l'API refuse la demande si elle n'est pas transmise. */}
+            <Grid item xs={12}>
+              <Box sx={{ mt: 3, p: 2, backgroundColor: "brand.cream", borderRadius: 2 }}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      required
+                      name="consentement"
+                      checked={formData.consentement}
+                      onChange={handleChange}
+                      sx={{ color: "secondary.main", alignSelf: "flex-start", pt: 0 }}
+                    />
+                  }
+                  sx={{ alignItems: "flex-start", m: 0 }}
+                  label={
+                    <Typography variant="body2" color="text.primary">
+                      J’accepte qu’Incloz utilise les informations de ce
+                      formulaire — mes mensurations et, le cas échéant, ma
+                      photographie — pour étudier ma demande de vêtement adapté.
+                      Elles sont conservées {DUREE_CONSERVATION_MOIS} mois, puis
+                      supprimées. Je peux retirer mon accord à tout moment. Voir
+                      la{" "}
+                      <Link
+                        component={RouterLink}
+                        to="/politique-confidentialite"
+                        color="primary.dark"
+                      >
+                        politique de confidentialité
+                      </Link>
+                      .
+                    </Typography>
+                  }
+                />
+              </Box>
+            </Grid>
+
+            {erreur && (
+              <Grid item xs={12}>
+                <Alert severity="error" role="alert" sx={{ mt: 2 }}>
+                  {erreur}
+                </Alert>
+              </Grid>
+            )}
 
             <Grid item xs={12}>
               <Button

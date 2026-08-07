@@ -143,6 +143,7 @@ describe('Validation des entrées', () => {
   it('refuse un type de vêtement inconnu', async () => {
     const res = await api()
       .post('/api/custom-request')
+      .field('consentement', 'true')
       .field('nom', 'Martin')
       .field('prenom', 'Camille')
       .field('email', 'camille@incloz.fr')
@@ -150,11 +151,14 @@ describe('Validation des entrées', () => {
       .field('typeVetement', 'combinaison-spatiale')
 
     expect(res.status).toBe(400)
+    // Le consentement est fourni : le refus doit bien porter sur le vêtement.
+    expect(res.body.message).toMatch(/vêtement/i)
   })
 
   it('accepte une demande sur-mesure valide', async () => {
     const res = await api()
       .post('/api/custom-request')
+      .field('consentement', 'true')
       .field('nom', 'Martin')
       .field('prenom', 'Camille')
       .field('email', 'camille@incloz.fr')

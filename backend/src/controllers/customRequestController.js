@@ -2,6 +2,14 @@ import fs from 'fs'
 import asyncHandler from 'express-async-handler'
 import CustomRequest from '../models/customRequestModel.js'
 import { resolvePrivateUpload } from '../config/paths.js'
+import { dateExpiration } from '../config/conservation.js'
+
+/**
+ * Version de la politique de confidentialité en vigueur, enregistrée avec
+ * chaque consentement. Doit refléter `VERSION_POLITIQUE` de
+ * `frontend/src/config/entreprise.js`.
+ */
+export const VERSION_POLITIQUE = '2026-08-07'
 
 /**
  * Le nom du fichier reste interne : il n'apparaît dans aucune réponse. La photo
@@ -50,6 +58,13 @@ export const createCustomRequest = asyncHandler(async (req, res) => {
     cuisse,
     entrejambe,
     photos: req.file ? req.file.filename : null,
+
+    // Le consentement lui-même a été exigé par les règles de validation : ce
+    // qui est enregistré ici, c'est sa preuve — quand, et à quelle version du
+    // texte. La date vient du serveur, pas du client.
+    consentementLe: new Date(),
+    versionPolitique: VERSION_POLITIQUE,
+    expireLe: dateExpiration(),
   })
 
   const created = await customRequest.save()
