@@ -86,9 +86,10 @@ describe('Titre de premier niveau', () => {
   // d'accessibilité fait planter jsdom sur deux de ces pages, et c'est bien le
   // niveau du titre dans le document qui nous intéresse ici.
   //
-  // /product/:id est absent de la liste : sans données d'API la page reste sur
-  // son écran de chargement, qui n'a pas encore de titre. C'est le sujet de la
-  // PR sur les états de la boutique.
+  // /product/:id reste absent de cette liste : son titre dépend de l'état de
+  // l'appel — chargement, produit introuvable, panne — et se vérifie donc avec
+  // le reste de ces états, dans boutiqueEtats.test.jsx. L'invariant y est le
+  // même : un <h1> et un seul, quel que soit l'état.
   const routes = [
     ['/', 'Votre marque de vêtements de sport'],
     ['/boutique', 'La boutique'],

@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Typography,
@@ -10,10 +11,12 @@ import {
   DialogActions,
   Radio,
   Container,
+  Skeleton,
   ThemeProvider,
   createTheme,
 } from "@mui/material";
-import { useParams, useNavigate } from "react-router-dom";
+import { visuallyHidden } from "@mui/utils";
+import { Link as RouterLink, useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_URL, IMG_URL } from "../../config/api";
 
@@ -76,28 +79,85 @@ const theme = createTheme({
   },
 });
 
+// Fond commun aux écrans de chargement, d'absence et de panne.
+const ECRAN = { backgroundColor: "brand.cream", minHeight: "60vh", py: 6 };
+
+/**
+ * Écran de sortie quand il n'y a pas de fiche à montrer.
+ *
+ * Toujours un titre — la page doit annoncer son sujet même quand ce sujet est
+ * une absence — et toujours une issue : la boutique reste à un clic. Sans
+ * `onReessayer`, seule cette issue est proposée : réessayer n'a aucun sens sur
+ * un produit qui n'existe pas.
+ */
+const Impasse = ({ titre, message, onReessayer }) => (
+  <Box sx={{ ...ECRAN, display: "flex", justifyContent: "center", alignItems: "center", px: 2 }}>
+    <Box role="alert" sx={{ textAlign: "center", maxWidth: 480 }}>
+      <Typography variant="h4" component="h1" color="secondary.main" fontWeight="bold" gutterBottom>
+        {titre}
+      </Typography>
+      <Typography variant="body1" color="text.primary" sx={{ mb: 4 }}>
+        {message}
+      </Typography>
+      <Box sx={{ display: "flex", gap: 2, justifyContent: "center", flexWrap: "wrap" }}>
+        {onReessayer && (
+          <Button
+            variant="contained"
+            onClick={onReessayer}
+            sx={{ backgroundColor: "primary.main", color: "primary.contrastText" }}
+          >
+            Réessayer
+          </Button>
+        )}
+        <Button component={RouterLink} to="/boutique" variant="outlined" color="secondary">
+          Retourner à la boutique
+        </Button>
+      </Box>
+    </Box>
+  </Box>
+);
+
+Impasse.propTypes = {
+  titre: PropTypes.string.isRequired,
+  message: PropTypes.string.isRequired,
+  onReessayer: PropTypes.func,
+};
+
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
+  const [statut, setStatut] = useState("chargement");
   const [size, setSize] = useState("S");
   const [adaptation, setAdaptation] = useState("pression");
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  // L'échec ne partait qu'en console et `product` restait à null : la page
+  // affichait « Chargement… » indéfiniment, aussi bien pour un produit
+  // inexistant que pour une API en panne. Deux causes très différentes, une
+  // seule apparence — et aucune issue proposée au visiteur.
+  //
+  // L'API répond 404 aussi bien pour un identifiant malformé que pour un
+  // produit absent : dans les deux cas, du point de vue de l'appelant, la fiche
+  // n'existe pas.
+  const chargerProduit = useCallback(async () => {
+    setStatut("chargement");
 
+    try {
+      const res = await axios.get(`${API_URL}/products/${id}`);
+      setProduct(res.data);
+      setStatut("ok");
+    } catch (error) {
+      console.error("Chargement du produit impossible", error);
+      setProduct(null);
+      setStatut(error.response?.status === 404 ? "introuvable" : "erreur");
+    }
+  }, [id]);
 
   useEffect(() => {
-    const getProduct = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/products/${id}`);
-        setProduct(res.data);
-      } catch (error) {
-        console.error("Erreur lors du chargement du produit", error);
-      }
-    };
-    getProduct();
-  }, [id]);
+    chargerProduit();
+  }, [chargerProduit]);
 
   const handleAddToCart = () => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -129,14 +189,54 @@ const ProductDetail = () => {
     setDialogOpen(true);
   };
 
-  if (!product)
+  // Les trois écrans qui suivent sont rendus hors du ThemeProvider local : ce
+  // dernier ne redéfinit qu'une palette partielle, sans les nuances de la
+  // charte. Ce thème local reste une dette, traitée à part.
+  if (statut === "chargement") {
     return (
-      <ThemeProvider theme={theme}>
-        <Box sx={{ backgroundColor: "#FFF6EB", minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Typography>Chargement...</Typography>
-        </Box>
-      </ThemeProvider>
+      <Box sx={ECRAN}>
+        <Container maxWidth="lg" aria-busy="true">
+          {/* Les squelettes n'existent que pour l'œil : le chargement doit être
+              annoncé à qui ne voit pas la page. */}
+          <Typography component="h1" sx={visuallyHidden}>
+            Chargement de la fiche produit
+          </Typography>
+          <Grid container spacing={6}>
+            <Grid item xs={12} md={5} lg={4}>
+              <Skeleton variant="rectangular" height={200} />
+            </Grid>
+            <Grid item xs={12} md={7} lg={8}>
+              <Skeleton variant="text" width="60%" sx={{ fontSize: "1.5rem" }} />
+              <Skeleton variant="text" width="35%" />
+              <Skeleton variant="text" width="20%" sx={{ fontSize: "1.75rem", mb: 3 }} />
+              <Skeleton variant="text" width="90%" />
+              <Skeleton variant="text" width="80%" />
+              <Skeleton variant="rectangular" width={260} height={40} sx={{ mt: 4 }} />
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
     );
+  }
+
+  if (statut === "introuvable") {
+    return (
+      <Impasse
+        titre="Produit introuvable"
+        message="Ce produit n’existe pas ou n’est plus proposé. Il a peut-être été retiré du catalogue."
+      />
+    );
+  }
+
+  if (statut === "erreur") {
+    return (
+      <Impasse
+        titre="Ce produit n’a pas pu être chargé"
+        message="La fiche est momentanément inaccessible. Vérifiez votre connexion, puis réessayez — si cela persiste, la panne vient de notre côté."
+        onReessayer={chargerProduit}
+      />
+    );
+  }
 
   return (
     <ThemeProvider theme={theme}>
