@@ -26,3 +26,15 @@ export const updateProfileRules = [
     .isLength({ min: 8 })
     .withMessage('Le mot de passe doit faire au moins 8 caractères'),
 ]
+
+// PUT /api/users/:id était la seule route d'écriture sans règles, alors que
+// c'est elle qui décide qui est administrateur.
+export const updateUserRules = [
+  body('name').optional().trim().notEmpty().withMessage('Le nom ne peut pas être vide'),
+  body('email').optional().trim().isEmail().withMessage('Adresse e-mail invalide'),
+  body('isAdmin')
+    .optional()
+    .isBoolean()
+    .withMessage('isAdmin doit être un booléen')
+    .toBoolean(),
+]

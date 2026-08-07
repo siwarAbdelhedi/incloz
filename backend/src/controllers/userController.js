@@ -2,6 +2,29 @@ import asyncHandler from 'express-async-handler'
 import generateToken from '../utils/generateToken.js'
 import User from '../models/userModel.js'
 
+/**
+ * Refuse une adresse déjà portée par un autre compte.
+ *
+ * Le schéma déclare bien `unique: true`, mais c'est une consigne de création
+ * d'index, pas une validation : selon que l'index a pu être construit ou non,
+ * la même requête produisait soit deux comptes avec la même adresse — et la
+ * connexion ne retrouve alors jamais que le premier — soit une erreur MongoDB
+ * brute ressortie en 500. Aucune des deux n'est le comportement attendu.
+ *
+ * L'index reste le filet de dernier recours pour les écritures concurrentes ;
+ * le gestionnaire d'erreurs traduit sa violation en 400.
+ */
+const refuseSiEmailPris = async (res, email, idDuCompte) => {
+  if (!email) return
+
+  const autre = await User.findOne({ email })
+
+  if (autre && !autre._id.equals(idDuCompte)) {
+    res.status(400)
+    throw new Error('Cette adresse e-mail est déjà utilisée')
+  }
+}
+
 // @desc    Auth user & get token
 // @route   POST /api/users/login
 // @access  Public
@@ -83,6 +106,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id)
 
   if (user) {
+    await refuseSiEmailPris(res, req.body.email, user._id)
+
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
     if (req.body.password) {
@@ -151,9 +176,18 @@ const updateUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)
 
   if (user) {
+    await refuseSiEmailPris(res, req.body.email, user._id)
+
     user.name = req.body.name || user.name
     user.email = req.body.email || user.email
-    user.isAdmin = req.body.isAdmin
+
+    // L'affectation était inconditionnelle : un corps sans `isAdmin` — le cas
+    // normal quand on ne modifie qu'un nom — passait le champ à `undefined`,
+    // la validation du schéma échouait et la requête ressortait en 500.
+    // `||` ne conviendrait pas ici : il écraserait un `false` volontaire.
+    if (req.body.isAdmin !== undefined) {
+      user.isAdmin = req.body.isAdmin
+    }
 
     const updatedUser = await user.save()
 
