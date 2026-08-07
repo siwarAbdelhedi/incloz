@@ -11,6 +11,20 @@ const mesure = (champ) =>
     .toFloat()
 
 export const customRequestRules = [
+  // Le formulaire recueille des mensurations et parfois une photographie, dans
+  // un contexte où elles peuvent révéler une situation de handicap. Ces
+  // données ne peuvent être traitées que sur consentement exprès : sans case
+  // cochée, la demande est refusée plutôt qu'enregistrée.
+  //
+  // Les champs arrivent en multipart, donc en chaînes : le front envoie la
+  // valeur littérale « true ». Les autres formes usuelles d'une case cochée
+  // sont acceptées pour ne pas dépendre d'un détail d'implémentation.
+  body('consentement')
+    .customSanitizer((valeur) => String(valeur).toLowerCase())
+    .isIn(['true', 'on', '1'])
+    .withMessage(
+      'Le consentement au traitement des données est obligatoire pour envoyer une demande'
+    ),
   body('nom').trim().notEmpty().withMessage('Le nom est obligatoire').isLength({ max: 100 }),
   body('prenom').trim().notEmpty().withMessage('Le prénom est obligatoire').isLength({ max: 100 }),
   body('email').trim().isEmail().withMessage('Adresse e-mail invalide'),
