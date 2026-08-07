@@ -11,6 +11,9 @@ const pngMinimal = Buffer.from(
 )
 
 const champsValides = {
+  // Obligatoire depuis que le formulaire recueille un consentement exprès :
+  // sans lui, l'API refuse la demande. Voir conservation.test.js.
+  consentement: 'true',
   nom: 'Martin',
   prenom: 'Camille',
   email: 'camille@incloz.fr',

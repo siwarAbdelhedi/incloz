@@ -143,7 +143,7 @@ L'API est instanciée sans ouvrir de port : `src/app.js` construit et exporte
 l'application Express, `src/server.js` se contente de charger l'environnement,
 de connecter MongoDB et d'écouter. C'est ce découpage qui rend l'API testable.
 
-84 tests : inscription, connexion, invariants du hachage des mots de passe,
+96 tests : inscription, connexion, invariants du hachage des mots de passe,
 middleware `protect` (jeton absent, invalide, sans préfixe `Bearer`, compte
 supprimé), accès aux produits, à la liste des comptes et au panier, en-têtes de
 sécurité, limitation de débit, validation des entrées, et confidentialité des
@@ -156,12 +156,13 @@ partiel, unicité de l'adresse e-mail, et validation du panier.
 
 ### Interface
 
-Vitest + Testing Library, dans un DOM simulé (jsdom). 90 tests : structure du
+Vitest + Testing Library, dans un DOM simulé (jsdom). 124 tests : structure du
 document et hiérarchie des titres, titre d'onglet par route, coquille HTML et
 aperçu de partage, jetons de la charte et contrastes WCAG, accessibilité du
-header, et session — état selon qu'on est connecté ou non, déconnexion,
+header, session — état selon qu'on est connecté ou non, déconnexion,
 redirections de `<ProtectedRoute>`, restauration après rechargement, tolérance à
-un stockage corrompu.
+un stockage corrompu — contenu et structure des trois pages légales, et
+consentement du formulaire sur-mesure.
 
 ## Scripts
 
@@ -170,6 +171,7 @@ un stockage corrompu.
 | `npm run setup` | Installe les dépendances des deux applications |
 | `npm --prefix backend test` | Tests de l'API |
 | `npm --prefix frontend test` | Tests de l'interface |
+| `npm --prefix backend run purge:demandes` | Supprime les demandes sur-mesure arrivées au terme de leur conservation, photos comprises. À planifier une fois par jour |
 | `npm run dev` | Lance l'API et le front en parallèle |
 | `npm run dev:api` / `npm run dev:web` | Lance une seule des deux |
 | `npm run lint` | ESLint sur le front |
@@ -265,7 +267,7 @@ Base : `/api`. Les routes privées attendent un en-tête
 
 | Méthode | Route | Accès | Description |
 |---|---|---|---|
-| `POST` | `/custom-request` | Public, `multipart/form-data` | Dépôt d'une demande. Accuse réception sans renvoyer les données déposées |
+| `POST` | `/custom-request` | Public, `multipart/form-data` | Dépôt d'une demande. Le champ `consentement` est **obligatoire** : sans lui, la demande est refusée. Accuse réception sans renvoyer les données déposées |
 | `GET` | `/custom-request` | Admin | Liste, la plus récente d'abord |
 | `GET` | `/custom-request/:id` | Admin | Une demande |
 | `GET` | `/custom-request/:id/photo` | Admin | Sert la pièce jointe |
@@ -307,8 +309,10 @@ dans la roadmap.
   signées.
 - Les mots de passe n'ont pas de parcours de récupération, alors que le lien
   « mot de passe oublié » existe dans le formulaire de connexion.
-- Aucune durée de conservation n'est appliquée aux demandes sur-mesure ni à
-  leurs photos.
+- La purge des demandes expirées existe (`npm --prefix backend run
+  purge:demandes`) mais **n'est planifiée nulle part**. Tant qu'aucune tâche
+  périodique ne la lance, la durée de conservation annoncée au visiteur n'est
+  pas tenue : c'est l'exécution du script qui la rend vraie, pas son existence.
 - **MongoDB tourne sans authentification.** C'est acceptable tant que la base
   n'est joignable que depuis le loopback ou un réseau privé — mais c'est le seul
   rempart. En production, activer une authentification (`MONGO_INITDB_ROOT_*` et
@@ -346,8 +350,12 @@ dépendances de production sans vulnérabilité connue — Mongoose 9, jsonwebto
 - Le lien « Nos adaptations » du menu pointe vers `/adaptations`, une page qui
   n'existe pas — le visiteur tombe sur le 404. Le modèle et le contrôleur
   existent côté API mais la route n'est pas montée et l'écran n'est pas écrit.
-- Les pages légales (CGU, mentions légales, politique de confidentialité) sont
-  accessibles mais ne contiennent qu'un titre.
+- Les pages légales sont rédigées, mais **plusieurs informations manquent
+  encore** : forme juridique, SIRET, adresse du siège, directeur de la
+  publication, coordonnées de l'hébergeur et adresse dédiée aux demandes RGPD.
+  Elles se remplissent toutes dans `frontend/src/config/entreprise.js`, et
+  s'affichent en attendant sous forme de marqueurs « à compléter » bien
+  visibles. À renseigner avant toute mise en production.
 
 ### Qualité
 

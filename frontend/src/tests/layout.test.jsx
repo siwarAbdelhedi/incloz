@@ -99,9 +99,11 @@ describe('Titre de premier niveau', () => {
     ['/login', 'Connexion'],
     ['/register', 'Créer un compte'],
     ['/custom-request', 'Fiche de renseignement'],
-    ['/cgu', /Conditions Générales/],
+    // Casse de phrase, conforme à l'usage typographique français : les titres
+    // de ces pages ne portaient qu'une majuscule initiale une fois rédigés.
+    ['/cgu', /Conditions générales d’utilisation/],
     ['/mentions-legales', 'Mentions légales'],
-    ['/politique-confidentialite', /Politique de Confidentialité/],
+    ['/politique-confidentialite', /Politique de confidentialité/],
     ['/cette-page-nexiste-pas', /Page introuvable/],
   ]
 
