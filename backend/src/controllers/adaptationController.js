@@ -48,7 +48,8 @@ export const deleteAdaptation = asyncHandler(async (req, res) => {
   const adaptation = await Adaptatio.findById(req.params.id)
 
   if (adaptation) {
-    await adaptation.remove()
+    // Voir userController : `remove()` n'existe plus depuis Mongoose 7.
+    await adaptation.deleteOne()
     res.json({ message: 'Adaptation removed' })
   } else {
     res.status(404)

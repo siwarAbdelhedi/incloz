@@ -61,6 +61,21 @@ describe('POST /api/upload', () => {
 
     expect(res.status).toBe(403)
   })
+
+  // Ce cas traverse toute la chaîne — protect, admin, puis multer — sans
+  // jamais appeler Cloudinary, qui demanderait des identifiants. C'est ce qui
+  // permet de vérifier le remplacement de multer-storage-cloudinary par
+  // l'envoi natif : si le moteur de stockage était mal câblé, la requête
+  // n'arriverait pas jusqu'au 400.
+  it('accepte un administrateur mais réclame un fichier', async () => {
+    const { token } = await createUser({ email: 'chef@incloz.fr', admin: true })
+    const res = await api()
+      .post('/api/upload')
+      .set(...auth(token))
+
+    expect(res.status).toBe(400)
+    expect(res.body.message).toMatch(/no file/i)
+  })
 })
 
 describe('Validation des entrées', () => {
