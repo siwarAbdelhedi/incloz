@@ -156,12 +156,17 @@ partiel, unicité de l'adresse e-mail, et validation du panier.
 
 ### Interface
 
-Vitest + Testing Library, dans un DOM simulé (jsdom). 90 tests : structure du
+Vitest + Testing Library, dans un DOM simulé (jsdom). 107 tests : structure du
 document et hiérarchie des titres, titre d'onglet par route, coquille HTML et
 aperçu de partage, jetons de la charte et contrastes WCAG, accessibilité du
-header, et session — état selon qu'on est connecté ou non, déconnexion,
+header, session — état selon qu'on est connecté ou non, déconnexion,
 redirections de `<ProtectedRoute>`, restauration après rechargement, tolérance à
-un stockage corrompu.
+un stockage corrompu — et états de la boutique : chargement, catalogue vide,
+panne de l'API, produit introuvable.
+
+`boutiqueEtats.test.jsx` vérifie en particulier qu'aucun produit inventé ne
+s'affiche quand l'API échoue. Le catalogue se rabattait sur trois articles
+écrits en dur, sans rien indiquer au visiteur.
 
 ## Scripts
 
