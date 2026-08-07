@@ -17,9 +17,21 @@ import customRequestRoutes from './routes/customRequestRoutes.js'
 // peuvent instancier l'API contre une base éphémère sans ouvrir de port.
 const app = express()
 
-// L'API est derrière un reverse proxy en production : sans ça, express-rate-limit
-// voit l'IP du proxy pour tout le monde et limite tous les visiteurs ensemble.
-app.set('trust proxy', 1)
+// Derrière un reverse proxy, express-rate-limit voit l'IP du proxy pour tout
+// le monde et limite tous les visiteurs ensemble : il faut alors lui dire de
+// lire X-Forwarded-For.
+//
+// Mais cette confiance était accordée sans condition, y compris quand l'API
+// est jointe directement — ce qui est le cas de la stack de développement, qui
+// publie le port 5000. L'appelant choisissait alors son identité : en faisant
+// tourner l'en-tête, la limitation ne comptait plus rien. Mesuré avec un
+// plafond à 3 : 10 requêtes, 7 refusées sans l'en-tête, aucune avec.
+//
+// La confiance est donc explicite et vient du déploiement. TRUST_PROXY vaut le
+// nombre de proxies traversés — 1 pour un nginx en frontal. Non renseignée,
+// elle vaut 0 : aucun en-tête n'est cru, et la limitation s'applique sur l'IP
+// réelle de la connexion.
+app.set('trust proxy', Number(process.env.TRUST_PROXY) || 0)
 
 app.use(helmet())
 

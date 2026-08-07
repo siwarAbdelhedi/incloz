@@ -1,3 +1,14 @@
+/**
+ * Environnements où la trace d'exécution est renvoyée à l'appelant.
+ *
+ * Le test portait auparavant sur `!== 'production'` : n'importe quelle autre
+ * valeur — variable oubliée au déploiement, mal orthographiée, `ENV_FILE`
+ * incomplet — suffisait à exposer les chemins du serveur et la structure
+ * interne de l'application. Le défaut est désormais fermé : la trace ne sort
+ * que là où quelqu'un la lit.
+ */
+const ENVIRONNEMENTS_VERBEUX = new Set(['development', 'test'])
+
 const notFound = (req, res, next) => {
   const error = new Error(`Not Found - ${req.originalUrl}`)
   res.status(404)
@@ -20,10 +31,18 @@ const errorHandler = (err, req, res, next) => {
     err.message = 'Ressource introuvable'
   }
 
+  // Violation d'un index unique. Deux requêtes concurrentes peuvent passer la
+  // vérification applicative en même temps et n'échouer qu'ici : c'est une
+  // entrée refusée, pas une panne serveur.
+  if (err.code === 11000) {
+    statusCode = 400
+    err.message = 'Cette valeur est déjà utilisée'
+  }
+
   res.status(statusCode)
   res.json({
     message: err.message,
-    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+    stack: ENVIRONNEMENTS_VERBEUX.has(process.env.NODE_ENV) ? err.stack : null,
   })
 }
 

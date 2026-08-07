@@ -143,18 +143,25 @@ L'API est instanciée sans ouvrir de port : `src/app.js` construit et exporte
 l'application Express, `src/server.js` se contente de charger l'environnement,
 de connecter MongoDB et d'écouter. C'est ce découpage qui rend l'API testable.
 
-63 tests : inscription, connexion, invariants du hachage des mots de passe,
+84 tests : inscription, connexion, invariants du hachage des mots de passe,
 middleware `protect` (jeton absent, invalide, sans préfixe `Bearer`, compte
 supprimé), accès aux produits, à la liste des comptes et au panier, en-têtes de
 sécurité, limitation de débit, validation des entrées, et confidentialité des
 pièces jointes des demandes sur-mesure.
 
+`tests/defautsApi.test.js` regroupe à part les cas issus de défauts constatés
+puis corrigés : trace d'exécution masquée hors développement, limitation de
+débit insensible à un `X-Forwarded-For` forgé, `PUT /api/users/:id` sur un corps
+partiel, unicité de l'adresse e-mail, et validation du panier.
+
 ### Interface
 
-Vitest + Testing Library, dans un DOM simulé (jsdom). 13 tests sur la session :
-état du header selon qu'on est connecté ou non, déconnexion, redirections de
-`<ProtectedRoute>`, restauration de la session après rechargement, et tolérance
-à un stockage corrompu.
+Vitest + Testing Library, dans un DOM simulé (jsdom). 90 tests : structure du
+document et hiérarchie des titres, titre d'onglet par route, coquille HTML et
+aperçu de partage, jetons de la charte et contrastes WCAG, accessibilité du
+header, et session — état selon qu'on est connecté ou non, déconnexion,
+redirections de `<ProtectedRoute>`, restauration après rechargement, tolérance à
+un stockage corrompu.
 
 ## Scripts
 
@@ -178,10 +185,18 @@ Vitest + Testing Library, dans un DOM simulé (jsdom). 13 tests sur la session :
 
 | Variable | Rôle |
 |---|---|
+| `NODE_ENV` | Doit valoir exactement `production` en production : c'est cette valeur qui masque les traces d'exécution dans les réponses d'erreur |
 | `PORT` | Port d'écoute de l'API (5000) |
 | `MONGO_URI` | Chaîne de connexion MongoDB |
 | `JWT_SECRET` | Clé de signature des jetons — doit être longue et aléatoire |
+| `TRUST_PROXY` | Nombre de reverse proxies devant l'API — `1` derrière un nginx, vide sinon. Voir ci-dessous |
 | `CLOUDINARY_*` | Identifiants Cloudinary pour `POST /api/upload` |
+
+`TRUST_PROXY` décide si `X-Forwarded-For` est cru. La renseigner alors qu'aucun
+proxy ne réécrit cet en-tête revient à laisser l'appelant choisir son identité :
+la limitation de débit ne compte alors plus rien, il lui suffit de faire tourner
+l'en-tête. Ne la déclarer que si un proxy est réellement en place — non
+renseignée, la limitation s'applique sur l'IP réelle de la connexion.
 
 **`frontend/.env`** — suivi par git, et c'est volontaire : les variables `VITE_*`
 sont injectées dans le bundle au build et sont donc publiques par nature. Elles
@@ -302,12 +317,16 @@ dans la roadmap.
   robot le 28 juillet 2026 : elle était publiée sur `0.0.0.0:27017` sans mot de
   passe. Une base ouverte est trouvée en quelques heures.
 
-Déjà traité : `helmet`, limitation de débit, validation des entrées sur toutes
-les routes d'écriture, `POST /api/upload` réservé aux administrateurs, corps
-JSON et fichiers plafonnés, pièces jointes sorties du dossier public et
-réservées aux administrateurs, port MongoDB de la stack de développement lié au
-loopback, et dépendances de production sans vulnérabilité connue — Mongoose 9,
-jsonwebtoken 9, multer 2, Cloudinary 2 (`npm audit --omit=dev` : 0 avis).
+Déjà traité : `helmet`, limitation de débit — insensible à un `X-Forwarded-For`
+forgé tant que `TRUST_PROXY` n'est pas déclarée —, validation des entrées sur
+toutes les routes d'écriture montées (`adaptationRoutes.js` n'en a pas, mais
+n'est pas monté dans `app.js`), unicité de l'adresse e-mail vérifiée à la
+modification d'un compte, traces d'exécution masquées hors développement,
+`POST /api/upload` réservé aux administrateurs, corps JSON et fichiers
+plafonnés, pièces jointes sorties du dossier public et réservées aux
+administrateurs, port MongoDB de la stack de développement lié au loopback, et
+dépendances de production sans vulnérabilité connue — Mongoose 9, jsonwebtoken
+9, multer 2, Cloudinary 2 (`npm audit --omit=dev` : 0 avis).
 
 ### Fonctionnel
 
