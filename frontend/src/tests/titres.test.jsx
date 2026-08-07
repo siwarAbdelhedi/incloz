@@ -29,6 +29,8 @@ describe('Titre par route', () => {
     ['/blog', 'Le blog — Incloz'],
     ['/about', 'Qui sommes-nous ? — Incloz'],
     ['/dashboard', 'Votre espace — Incloz'],
+    ['/admin/demandes', 'Demandes sur-mesure — Incloz'],
+    ['/admin/demandes/64f0a1', 'Fiche de demande — Incloz'],
     ['/login', 'Connexion — Incloz'],
     ['/register', 'Créer un compte — Incloz'],
     ['/product/64f0a1', 'Fiche produit — Incloz'],

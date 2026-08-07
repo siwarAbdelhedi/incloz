@@ -84,6 +84,13 @@ describe('Contrastes WCAG AA', () => {
       expect(ratio, `orange sombre sur ${nom} : ${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA_TEXTE)
     }
   })
+
+  // Le blanc est le quatrième fond du site : c'est celui des cartes, des
+  // tableaux et des panneaux d'administration. Il manquait à cette liste.
+  it("l'orange sombre est lisible sur le fond des cartes", () => {
+    const ratio = contraste(theme.palette.primary.dark, theme.palette.background.paper)
+    expect(ratio, `${ratio.toFixed(2)}:1`).toBeGreaterThanOrEqual(AA_TEXTE)
+  })
 })
 
 describe('Typographie', () => {

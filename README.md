@@ -143,11 +143,12 @@ L'API est instanciée sans ouvrir de port : `src/app.js` construit et exporte
 l'application Express, `src/server.js` se contente de charger l'environnement,
 de connecter MongoDB et d'écouter. C'est ce découpage qui rend l'API testable.
 
-96 tests : inscription, connexion, invariants du hachage des mots de passe,
+103 tests : inscription, connexion, invariants du hachage des mots de passe,
 middleware `protect` (jeton absent, invalide, sans préfixe `Bearer`, compte
 supprimé), accès aux produits, à la liste des comptes et au panier, en-têtes de
-sécurité, limitation de débit, validation des entrées, et confidentialité des
-pièces jointes des demandes sur-mesure.
+sécurité, limitation de débit, validation des entrées, confidentialité des
+pièces jointes des demandes sur-mesure, et effacement d'une demande — fichier
+compris.
 
 `tests/defautsApi.test.js` regroupe à part les cas issus de défauts constatés
 puis corrigés : trace d'exécution masquée hors développement, limitation de
@@ -156,18 +157,24 @@ partiel, unicité de l'adresse e-mail, et validation du panier.
 
 ### Interface
 
-Vitest + Testing Library, dans un DOM simulé (jsdom). 141 tests : structure du
+Vitest + Testing Library, dans un DOM simulé (jsdom). 178 tests : structure du
 document et hiérarchie des titres, titre d'onglet par route, coquille HTML et
 aperçu de partage, jetons de la charte et contrastes WCAG, accessibilité du
 header, session — état selon qu'on est connecté ou non, déconnexion,
 redirections de `<ProtectedRoute>`, restauration après rechargement, tolérance à
 un stockage corrompu — contenu et structure des trois pages légales,
-consentement du formulaire sur-mesure, et états de la boutique : chargement,
-catalogue vide, panne de l'API, produit introuvable.
+consentement du formulaire sur-mesure, états de la boutique — chargement,
+catalogue vide, panne de l'API, produit introuvable — et administration des
+demandes sur-mesure.
 
 `boutiqueEtats.test.jsx` vérifie en particulier qu'aucun produit inventé ne
 s'affiche quand l'API échoue. Le catalogue se rabattait sur trois articles
 écrits en dur, sans rien indiquer au visiteur.
+
+`adminDemandes.test.jsx` couvre le contrôle d'accès aux écrans
+d'administration, la présence du jeton sur chaque appel, l'affichage de la
+preuve de consentement, la confirmation avant effacement, et la mise en forme
+des échéances de conservation.
 
 ## Scripts
 
@@ -276,6 +283,7 @@ Base : `/api`. Les routes privées attendent un en-tête
 | `GET` | `/custom-request` | Admin | Liste, la plus récente d'abord |
 | `GET` | `/custom-request/:id` | Admin | Une demande |
 | `GET` | `/custom-request/:id/photo` | Admin | Sert la pièce jointe |
+| `DELETE` | `/custom-request/:id` | Admin | Efface la fiche **et** son fichier. La politique de confidentialité annonce un droit à l'effacement : sans cette route, l'honorer supposait un client MongoDB |
 
 Collecte identité, coordonnées, mensurations et une photo.
 
@@ -284,6 +292,11 @@ en statique**. Elles ne sortent que par la route `:id/photo`, réservée aux
 administrateurs, et le nom de fichier n'apparaît dans aucune réponse de l'API.
 Le dossier `backend/uploads/`, lui, reste public : il ne contient que les
 visuels du catalogue.
+
+Ces demandes se consultent depuis `/admin/demandes`, accessible aux comptes
+administrateurs depuis leur tableau de bord. La fiche affiche les coordonnées,
+les mensurations, la pièce jointe, la preuve du consentement — date et version
+du texte accepté — et la date d'effacement prévue.
 
 ### Upload
 
@@ -361,6 +374,10 @@ dépendances de production sans vulnérabilité connue — Mongoose 9, jsonwebto
   Elles se remplissent toutes dans `frontend/src/config/entreprise.js`, et
   s'affichent en attendant sous forme de marqueurs « à compléter » bien
   visibles. À renseigner avant toute mise en production.
+- **L'administration ne couvre que les demandes sur-mesure.** Le catalogue et
+  les comptes se modifient par l'API, sans écran : ajouter un produit suppose un
+  `POST /api/products` à la main. La liste des demandes n'est ni paginée ni
+  filtrable — suffisant pour quelques dizaines de fiches, à revoir au-delà.
 
 ### Qualité
 

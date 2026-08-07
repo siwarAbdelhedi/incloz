@@ -19,6 +19,8 @@ import LoginForm from "./components/Auth/LoginForm";
 import RegisterForm from "./components/Auth/RegisterForm";
 import ProductDetail from "./components/BoutiquePages/ProductDetail";
 import CustomRequest from "./components/Forms/CustomRequest";
+import AdminDemandes from "./pages/AdminDemandes";
+import AdminFicheDemande from "./pages/AdminFicheDemande";
 import CGU from "./pages/CGU";
 import MentionsLegales from "./pages/MentionsLegales";
 import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
@@ -70,6 +72,26 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              {/* Administration. `adminOnly` renvoie un compte connecté mais
+                  ordinaire vers son propre espace : il est authentifié, lui
+                  redemander ses identifiants n'aurait aucun sens. */}
+              <Route
+                path="/admin/demandes"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <AdminDemandes />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/demandes/:id"
+                element={
+                  <ProtectedRoute adminOnly>
+                    <AdminFicheDemande />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route path="/login" element={<LoginForm />} />
               <Route path="/register" element={<RegisterForm />} />
               <Route path="/product/:id" element={<ProductDetail />} />

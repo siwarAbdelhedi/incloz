@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler'
 import CustomRequest from '../models/customRequestModel.js'
 import { resolvePrivateUpload } from '../config/paths.js'
 import { dateExpiration } from '../config/conservation.js'
+import { supprimerDemande } from '../services/purgeDemandes.js'
 
 /**
  * Version de la politique de confidentialité en vigueur, enregistrée avec
@@ -121,4 +122,28 @@ export const getCustomRequestPhoto = asyncHandler(async (req, res) => {
   // Ces fichiers ne doivent jamais être mis en cache par un intermédiaire.
   res.setHeader('Cache-Control', 'private, no-store')
   res.sendFile(chemin)
+})
+
+// @desc    Effacer une demande personnalisée et sa pièce jointe
+// @route   DELETE /api/custom-request/:id
+// @access  Privé/Admin
+//
+// La politique de confidentialité annonce que toute personne peut demander
+// l'effacement de ses données. Sans cette route, honorer cette demande
+// supposait d'ouvrir un client MongoDB puis d'aller retrouver le fichier à la
+// main : une promesse écrite que rien ne permettait de tenir.
+//
+// La suppression réutilise le service de purge, pour que l'ordre — photo
+// d'abord, fiche ensuite — reste écrit à un seul endroit.
+export const deleteCustomRequest = asyncHandler(async (req, res) => {
+  const demande = await CustomRequest.findById(req.params.id)
+
+  if (!demande) {
+    res.status(404)
+    throw new Error('Demande introuvable')
+  }
+
+  await supprimerDemande(demande)
+
+  res.json({ message: 'Demande effacée' })
 })

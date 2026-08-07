@@ -7,6 +7,7 @@ import {
   getCustomRequests,
   getCustomRequestById,
   getCustomRequestPhoto,
+  deleteCustomRequest,
 } from '../controllers/customRequestController.js'
 import { protect, admin } from '../middleware/authMiddleware.js'
 import { formLimiter } from '../middleware/rateLimiters.js'
@@ -63,7 +64,11 @@ router
   )
   .get(protect, admin, getCustomRequests)
 
-router.get('/:id', protect, admin, getCustomRequestById)
+router
+  .route('/:id')
+  .get(protect, admin, getCustomRequestById)
+  .delete(protect, admin, deleteCustomRequest)
+
 router.get('/:id/photo', protect, admin, getCustomRequestPhoto)
 
 export default router

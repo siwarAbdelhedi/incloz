@@ -101,6 +101,23 @@ describe('Consultation des demandes', () => {
     expect(res.body[0].aUnePhoto).toBe(true)
     expect(res.body[0].photoUrl).toMatch(/^\/api\/custom-request\/\w+\/photo$/)
   })
+
+  // L'écran d'administration affiche ces trois champs : ils justifient la
+  // détention de la fiche et annoncent sa date de disparition. Les retirer de
+  // la réponse rendrait la conservation invérifiable depuis l'interface.
+  it('accompagne chaque demande de sa preuve de consentement et de son terme', async () => {
+    await envoyerDemande()
+    const { token } = await createUser({ email: 'admin@incloz.fr', admin: true })
+
+    const res = await api()
+      .get('/api/custom-request')
+      .set(...auth(token))
+
+    const [demande] = res.body
+    expect(Date.parse(demande.consentementLe)).not.toBeNaN()
+    expect(demande.versionPolitique).toBeTruthy()
+    expect(Date.parse(demande.expireLe)).toBeGreaterThan(Date.parse(demande.consentementLe))
+  })
 })
 
 describe('Accès à la photo', () => {
@@ -162,6 +179,88 @@ describe('Accès à la photo', () => {
     const res = await api()
       .get(`/api/custom-request/${depot.body.id}/photo`)
       .set(...auth(token))
+    expect(res.status).toBe(404)
+  })
+})
+
+// La politique de confidentialité annonce un droit à l'effacement. Sans cette
+// route, l'honorer supposait d'ouvrir un client MongoDB puis de retrouver le
+// fichier à la main.
+describe('Effacement d’une demande', () => {
+  const deposerEtAdmin = async () => {
+    const depot = await envoyerDemande()
+    const { token } = await createUser({ email: 'admin@incloz.fr', admin: true })
+    return { id: depot.body.id, token }
+  }
+
+  it('refuse l’effacement à un visiteur anonyme', async () => {
+    const { id } = await deposerEtAdmin()
+
+    expect((await api().delete(`/api/custom-request/${id}`)).status).toBe(401)
+    expect(fichiersPrives()).toHaveLength(1)
+  })
+
+  it('refuse l’effacement à un utilisateur non administrateur', async () => {
+    const { id } = await deposerEtAdmin()
+    const { token } = await createUser({ email: 'simple@incloz.fr' })
+
+    const res = await api()
+      .delete(`/api/custom-request/${id}`)
+      .set(...auth(token))
+
+    expect(res.status).toBe(403)
+    expect(fichiersPrives()).toHaveLength(1)
+  })
+
+  it('efface la fiche pour un administrateur', async () => {
+    const { id, token } = await deposerEtAdmin()
+
+    const res = await api()
+      .delete(`/api/custom-request/${id}`)
+      .set(...auth(token))
+
+    expect(res.status).toBe(200)
+
+    const relecture = await api()
+      .get(`/api/custom-request/${id}`)
+      .set(...auth(token))
+    expect(relecture.status).toBe(404)
+  })
+
+  // Effacer la fiche sans le fichier laisserait une photo de mensurations sur
+  // le disque, sans plus rien pour indiquer qu'elle doit partir.
+  it('efface aussi la photo, pas seulement la fiche', async () => {
+    const { id, token } = await deposerEtAdmin()
+    expect(fichiersPrives()).toHaveLength(1)
+
+    await api()
+      .delete(`/api/custom-request/${id}`)
+      .set(...auth(token))
+
+    expect(fichiersPrives()).toHaveLength(0)
+  })
+
+  it('efface une demande sans photo', async () => {
+    const depot = await envoyerDemande(false)
+    const { token } = await createUser({ email: 'admin@incloz.fr', admin: true })
+
+    const res = await api()
+      .delete(`/api/custom-request/${depot.body.id}`)
+      .set(...auth(token))
+
+    expect(res.status).toBe(200)
+  })
+
+  it('renvoie 404 sur une demande déjà effacée', async () => {
+    const { id, token } = await deposerEtAdmin()
+    await api()
+      .delete(`/api/custom-request/${id}`)
+      .set(...auth(token))
+
+    const res = await api()
+      .delete(`/api/custom-request/${id}`)
+      .set(...auth(token))
+
     expect(res.status).toBe(404)
   })
 })

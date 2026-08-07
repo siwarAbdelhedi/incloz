@@ -25,6 +25,12 @@ const TITRES = [
   ['/blog', 'Le blog'],
   ['/about', 'Qui sommes-nous ?'],
   ['/dashboard', 'Votre espace'],
+  // La route la plus spécifique en premier, comme partout dans cette liste.
+  // « Fiche de demande » et non « Demande sur-mesure » : ce dernier titre est
+  // déjà celui du formulaire public, et deux pages ne peuvent pas porter le
+  // même — c'est précisément ce que cette liste corrige.
+  ['/admin/demandes/:id', 'Fiche de demande'],
+  ['/admin/demandes', 'Demandes sur-mesure'],
   ['/login', 'Connexion'],
   ['/register', 'Créer un compte'],
   ['/product/:id', 'Fiche produit'],

@@ -15,6 +15,7 @@ import { Link as RouterLink } from "react-router-dom";
 import bgPattern from "../../assets/photo2.png";
 import axios from "axios";
 import { DUREE_CONSERVATION_MOIS } from "../../config/entreprise";
+import { VETEMENTS } from "../../config/vetements";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -130,9 +131,11 @@ const CustomRequest = () => {
                 name="typeVetement" value={formData.typeVetement}
                 onChange={handleChange}
               >
-                <MenuItem value="tshirt">T-shirt fitness</MenuItem>
-                <MenuItem value="short">Short fitness</MenuItem>
-                <MenuItem value="jogging">Jogging fitness</MenuItem>
+                {VETEMENTS.map(({ code, libelle }) => (
+                  <MenuItem key={code} value={code}>
+                    {libelle}
+                  </MenuItem>
+                ))}
               </TextField>
             </Grid>
 
