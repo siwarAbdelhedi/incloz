@@ -1,5 +1,11 @@
 # Dockerfile pour le frontend React/Vite
-FROM node:18-alpine as build
+#
+# La version doit suivre .nvmrc, comme le fait la CI (`node-version-file`).
+# Le front est le plus strict des deux : package.json y déclare
+# `engines: ^22.22.2 || >=24.15.0`. Sur l'ancien node:18, `npm ci` sortait en
+# EUSAGE et l'image ne se construisait pas — ni celle-ci, ni Dockerfile.dev,
+# donc `docker compose up` échouait sur le service web.
+FROM node:24-alpine AS build
 
 # Définir le répertoire de travail
 WORKDIR /app

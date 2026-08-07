@@ -1,5 +1,7 @@
 # Dockerfile de développement pour le backend Node.js
-FROM node:18-alpine
+#
+# Même version que .nvmrc, la CI et l'image de production : voir Dockerfile.
+FROM node:24-alpine
 
 # Définir le répertoire de travail
 WORKDIR /app
