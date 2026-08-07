@@ -301,14 +301,13 @@ dans la roadmap.
   interface publique. La base de développement de ce projet a été vidée par un
   robot le 28 juillet 2026 : elle était publiée sur `0.0.0.0:27017` sans mot de
   passe. Une base ouverte est trouvée en quelques heures.
-- Dépendances obsolètes : Mongoose 5 (fin de vie, vulnérabilité critique
-  d'injection), jsonwebtoken 8, multer 1.4.
 
 Déjà traité : `helmet`, limitation de débit, validation des entrées sur toutes
 les routes d'écriture, `POST /api/upload` réservé aux administrateurs, corps
 JSON et fichiers plafonnés, pièces jointes sorties du dossier public et
 réservées aux administrateurs, port MongoDB de la stack de développement lié au
-loopback.
+loopback, et dépendances de production sans vulnérabilité connue — Mongoose 9,
+jsonwebtoken 9, multer 2, Cloudinary 2 (`npm audit --omit=dev` : 0 avis).
 
 ### Fonctionnel
 

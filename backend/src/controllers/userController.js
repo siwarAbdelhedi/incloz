@@ -119,7 +119,10 @@ const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)
 
   if (user) {
-    await user.remove()
+    // `remove()` sur un document a disparu avec Mongoose 7, remplacé par
+    // `deleteOne()`. Sans ce changement, la suppression levait un TypeError
+    // et ressortait en 500.
+    await user.deleteOne()
     res.json({ message: 'User removed' })
   } else {
     res.status(404)

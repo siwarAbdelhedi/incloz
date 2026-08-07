@@ -20,10 +20,7 @@ process.env.RATE_LIMIT_GLOBAL_MAX = '100000'
 
 beforeAll(async () => {
   mongod = await MongoMemoryServer.create()
-  await mongoose.connect(mongod.getUri(), {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-  })
+  await mongoose.connect(mongod.getUri())
 })
 
 afterEach(async () => {
