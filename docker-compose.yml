@@ -66,6 +66,10 @@ services:
       # Ces URLs sont résolues par le navigateur, donc localhost et non "api".
       VITE_API_URL: http://localhost:5000/api
       VITE_IMG_URL: http://localhost:5000/uploads
+      # Sans elle, Vite laisse le marqueur %VITE_SITE_URL% tel quel dans
+      # index.html. Les fichiers .env sont exclus par .dockerignore et ne
+      # peuvent donc pas la fournir ici : elle doit être déclarée en clair.
+      VITE_SITE_URL: http://localhost:5173
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/index.html:/app/index.html
